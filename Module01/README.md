@@ -96,3 +96,12 @@ explain how I checked the code and SQL results.
 ## Reflection
 
 The Module 1 reflection still needs to be written.
+
+## SQLite shell tour
+
+Proves: LG3 — Toolchain
+
+- [Captured shell session](shell-tour.txt)
+- [SQL dump to rebuild the practice database](tour.sql)
+
+Most useful dot-command: .schema

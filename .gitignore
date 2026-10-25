@@ -1,0 +1,19 @@
+# Python environment and cache
+.venv/
+__pycache__/
+*.pyc
+
+# Local databases
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.duckdb
+*.parquet
+
+# Secrets
+.env
+.env.*
+
+# Generated telemetry data
+telemetry.csv

@@ -1,78 +1,98 @@
-# Module 1
+# Module 1 — Introduction & Local-First Foundations
 
-> **Example module** from the IoT introduction class. Adjust the headings and tasks to match your actual course content.
+Author: John Dadzie
 
-> When you start editing this file, remove this description.
->
-> Usually the first things you have to document are some inspirations hinting at what
-> you might be able to build in this class, a personal profile description regarding
-> programming expertise, previous MCU knowledge, creative qualities, and expectations
+[← Portfolio](../README.md) |
+[Official Module 1](https://github.com/iotempire/iotempire-teaching/blob/main/full-classes/hsbi-databases-10d/modules/01-introduction-and-local-first.md)
 
-Module description
+## Exploration plan
+
+Explore how SQLite stores machine telemetry locally, query it from
+Python, and verify AI-generated SQL using results and query plans.
 
 ## Learning Goals
 
-> **How to use the learning goals.** Copy the module's learning goals from the course workbook into the block below. Keep the `LG1`, `LG2`, … IDs and a one-word keyword. In each task, write `Proves: LG2` (or link to `[LG2](#lg2)`) so you can find the evidence quickly at checkpoint time. In the **Evidence** line under each goal, link to the task that proves it.
+### LG1 — Course
 
-<a id="lg1"></a>
-### LG1 — `<keyword>`
+Explain how this class works: the CBL/PBL philosophy, portfolio-based
+project work assessment, and the “moving bar” of a first-time course.
 
-<copy the goal here>
+**Evidence:** Course understanding and personal reflection still to add.
 
-**Evidence:** [Task Inspirations](#task-inspirations)
+### LG2 — Portfolio
 
-<a id="lg2"></a>
-### LG2 — `<keyword>`
+Set up a personal GitHub portfolio from the course template, with a
+clean first commit and a .gitignore that keeps databases and secrets
+out of Git.
 
-<copy the goal here>
+**Evidence:** Repository created and cloned; customization in progress.
+The .gitignore and first personal commit still need checking.
 
-**Evidence:** [Task Personal Profile](#task-personal-profile)
+### LG3 — Toolchain
 
-<a id="lg3"></a>
-### LG3 — `<keyword>`
+Set up the entire toolchain reproducibly with uv: one fixed Python
+plus SQLite, DuckDB, Datasette, and more, and verify it.
 
-<copy the goal here>
+**Evidence:** Pending. Running the practice scripts alone does not
+verify the required uv environment.
 
-**Evidence:** [Task What is IoT](#task-what-is-iot)
+### LG4 — Architecture
 
-<a id="task-inspirations"></a>
-## Task Inspirations
+Explain, with a measurement, the difference between an embedded
+database and a client/server database, and why most local apps
+should not run a server.
 
-**Proves:** [LG1](#lg1)
+**Evidence:** Local telemetry measurements are saved in the practice
+folder and still need transferring and reviewing.
 
-- Inspiration 1
-- Inspiration 2
+### LG5 — Python
 
-<a id="task-personal-profile"></a>
-## Task Personal Profile
+Load real rows into SQLite and query them from Python using
+bound parameters.
 
-**Proves:** [LG2](#lg2)
+**Evidence:** Telemetry scripts and results are saved in the practice
+folder and still need transferring into this portfolio.
 
-<a id="task-what-is-iot"></a>
-## Task What is IoT
+### LG6 — Verification
 
-**Proves:** [LG3](#lg3)
+Take a first LLM-generated query, run it, and begin the habit:
+verify before you trust.
 
-Domains and included areas:
+**Evidence:** SQL, query results, EXPLAIN QUERY PLAN output, and
+verification notes are saved locally and still need transferring.
 
--
--
+## Task checklist
 
-Commonly used (data) protocols:
+- [x] Create the GitHub portfolio repository.
+- [x] Clone the repository locally.
+- [ ] Finish personalizing the portfolio.
+- [ ] Add pod members and links to their portfolios.
+- [ ] Add the instructor as a collaborator.
+- [ ] Add and verify .gitignore.
+- [ ] Commit and push the portfolio changes.
+- [ ] Set up and verify the uv environment.
+- [ ] Complete the SQLite shell tour and save its output.
+- [ ] Play SQL Island and save a progress screenshot.
+- [ ] Write sql-island.md based on the actual game experience.
+- [x] Run the local telemetry practice exercises.
+- [x] Run and inspect an AI-generated SQL query.
+- [ ] Transfer scripts and notes into this portfolio.
+- [ ] Check query timings and remaining telemetry evidence.
+- [ ] Write the Module 1 reflection.
 
--
--
+## Personal profile
 
-Typical devices (appliance or micro controller):
+Still to write in my own words:
+- Previous programming and SQL experience.
+- Previous database, Python, terminal, and Git experience.
+- What I hope to learn from this course.
 
--
--
+## Collaboration and AI use
 
-Challenges:
+AI assisted with setup, practice materials, and drafting documentation.
+I will record collaborators and sources, review the drafts, and
+explain how I checked the code and SQL results.
 
--
--
+## Reflection
 
-## Reflection 1
-
-[Reflection 1](../Reflections/ref01.md)
+The Module 1 reflection still needs to be written.

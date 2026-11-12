@@ -1,0 +1,42 @@
+# Databases (DBS) — Module Index & Roadmap
+
+[← Course workbook](../README.md) | [Module 1](./01-introduction-and-local-first.md) | [Syllabus](../syllabus.md)
+
+> **Teaching this course?** The [instructor notes](../instructor-notes/README.md) have a per-session runbook — what to prepare, how to open, what is non-negotiable, what to cut.
+
+> Each module opens with its **learning goals**. A ***DRAFT BOUNDARY*** marks where the provisional part starts: near the top while a module is still being designed, at the **end** once it has been taught and revised. How learning goals are assessed, and why the tasks are negotiable, is explained once in the [syllabus](../syllabus.md#how-module-points-are-earned-from-your-portfolio).
+
+## Session roadmap (11 sessions + tutorials)
+
+| Module | Session | Modern studio | Legacy topics it reframes | Hands-on focus |
+|:---:|:---:|---|---|---|
+| [Module 1](./01-introduction-and-local-first.md) | 1 | Introduction & Local-First Foundations | *Intro: digitization, file-based storage flaws, DB taxonomy* | How the class works; environment check; embedded SQLite vs. server overkill; first LLM-assisted SQL profiling task. |
+| [Module 2](./02-data-contracts-and-legacy-schemas.md) | 2 | Data Contracts & Reading Legacy Schemas (ERD Audits) | *Conceptual Database Design (ERM/EERM), requirements analysis* | Reconstruct an ER model from a legacy schema, hunt integrity bugs, draft a code-first data contract. |
+| [Module 3](./03-llm-assisted-sql-and-query-profiling.md) | 3 | LLM-Assisted SQL & Query Profiling | *Standard SQL (DQL), relational algebra, query optimization* | Generate complex SQL with an LLM, read `EXPLAIN QUERY PLAN`, benchmark indexes, drill SQL injection. |
+| [Module 4](./04-integrity-constraints-and-triggers.md) | 4 | Data Integrity, Constraints & Edge Triggers | *Standard SQL (DDL/DML/DCL), data integrity, triggers/procedures* | `CHECK`/`UNIQUE`/`FK`, `STRICT` tables, generated columns, a trigger enforcing edge-telemetry rules. |
+| [Module 5](./05-normalization-vs-denormalization.md) | 5 | Normalization vs. Denormalization Benchmarking Studio | *Relational model, functional dependencies, 1NF–3NF* | Normalize to 3NF, denormalize on purpose, measure read/write/storage trade-offs in SQLite. |
+| [Module 6a](./06a-duckdb-analytical-engine.md) | 6 | The Analytical Engine (DuckDB) | *Query optimization, OLAP vs. OLTP, columnar storage* | Move a 2M-row report out of SQLite into Parquet, race the two engines, read `EXPLAIN ANALYZE`, find the boundary. |
+| [Module 6b](./06b-polyglot-persistence.md) | 7 | Polyglot Persistence & the Decision | *NoSQL, ACID vs. BASE, CAP theorem, DB within applications* | JSON documents in SQLite, a key-value comparison, a real server as the control group, and a one-page engine decision record. |
+| [Module 7](./07-final-project-studio.md) | 8–10 | Final Project Studio | *Project planning and implementation* | Kickoff and story, requirement mapping, build, integrate, harden, peer review, rehearse. Checkpoint feedback runs alongside in sessions 8–9. |
+| [Module 8](./08-final-project.md) | 11 | Final Project Specification, Demos & Project Discussions | *Assessment* | 15-minute live demo + individual project discussion; retrospective. |
+| [Resource Prompts](./Y-resources-prompt-bank.md) | — | Supplementary | — | Reflection prompts, LLM-verification drills, quick references. |
+| [Resource Bank](./Z-resources-bank.md) | — | Supplementary | — | Cheat sheets, troubleshooting, datasets, extended reading. |
+| [Session 1 slides](../slides/01-introduction.md) | 1 | Supplementary | — | Plain-Markdown slide deck Session 1 is presented from (any Markdown viewer; render to a 16:9 PDF with pandoc + Typst). See the [instructor hints](./Z-resources-bank.md#instructor-hints-presenting-the-markdown-slide-deck). |
+| *Tutorial sessions* | dates TBA | Tutorial support (TA) | — | Catch-up, deeper practice, stretcher deep dives, project support. Times announced via the LMS. |
+
+## What changed, and why
+
+| Legacy emphasis | This course's emphasis | Reason |
+|---|---|---|
+| Install MySQL Server + Workbench | Embedded SQLite (+ DuckDB) | The database is a library inside your process; no server to administer for a local app. |
+| Memorize SQL syntax | Generate with AI, then profile and secure | Syntactic recall is obsolete; reading a query plan and preventing injection is not. |
+| ER diagrams as an end product | Schema audits and code-first data contracts | Real work is reading someone else's schema and expressing its meaning in code. |
+| Normalization as a rule to obey | Normalization as a measured trade-off | Read/write/storage costs are empirical facts you can benchmark. |
+| Relational = the only option | Polyglot persistence, chosen deliberately | Edge and analytical workloads sometimes want JSON, columns, or key-value — and the course ends by running a real server once, to make the local-first choice a decision rather than a dogma. |
+| A fixed, lecture-scripted syllabus | A moving bar with fixed learning goals | The class is brand new and taught by someone learning databases with you; goals stay stable, tasks can move. |
+
+> **Sources for these shifts.** The move away from server-heavy defaults is documented — not opinion: the [local-first manifesto](https://www.inkandswitch.com/essay/local-first/), SQLite's ["Appropriate Uses For SQLite"](https://www.sqlite.org/whentouse.html) (*"SQLite competes with `fopen()`"*), and [Rails 8 shipping SQLite in production](https://rubyonrails.org/2024/11/7/rails-8-no-paas-required). Full list in the [resource bank](./Z-resources-bank.md#why-local-first-and-why-the-heavy-three-tier-default-is-questioned).
+
+## Assessment
+
+Assessment — how the points are earned, the checkpoints, the reflection format, and the grade scale — is defined in the [syllabus](../syllabus.md#assessment-project-work-20-points).

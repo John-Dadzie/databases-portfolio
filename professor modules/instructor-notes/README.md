@@ -1,0 +1,122 @@
+# Instructor Notes — Databases (DBS)
+
+These notes are for whoever teaches this class next. That may be you, with three weeks' notice and a memory of databases that is mostly `CREATE TABLE`. This course is often handed to a new professor, and the default reaction is to rebuild the lecture you were taught: 60 students in rows, 90 minutes of slides, an exam that sieves. **This class is not that**, and these notes exist so you can run it anyway.
+
+Content lives in [`../modules/`](../modules/00-index.md). Rules and assessment live in [`../syllabus.md`](../syllabus.md). Logistics (rooms, dates, announcements) are the LMS's job.
+
+| Note | What is inside |
+|---|---|
+| [Architecture decisions](./00-architecture-decisions.md) | Why the class is shaped this way: provenance, decision records with alternatives and reversal triggers, rejected ideas, open questions, recreation checklist, module-handbook coverage |
+| [Future work](./TODO.md) | Actionable leftovers for the next run, a discrepancy watch against the architecture log and the sibling classes, and the shared partial-grades thought |
+| [Assessment & operations](./00-assessment-and-operations.md) | Assessment form, milestone plan, submission hygiene, group sign-off, re-examination, privacy, AI declaration |
+| [Study formats](./study-formats.md) | The catalogue of pod-study and stage-and-gate variants, and the observations we still owe |
+| [Feedback rounds](./feedback-rounds.md) | The 10-minute script, the 145-minute run sheet, and the fill-in [template](./feedback-template.md) |
+| [Email template](./email-template.md) | Prep and expectation mail — send it at least three days before a session |
+| [PostgreSQL tunnel](./postgres-tunnel.sh) | The optional server contrast: Podman, Cloudflare tunnel, quick mode without a domain |
+
+Add a row to **[Future work](./TODO.md)** when you notice something you cannot fix this term. The
+Networking class inherits patterns from this class; what it is copying is written down in its
+[gift file](../../hsbi-networking-iot-10d/instructor-notes/from-databases.md).
+
+## Five commitments that make the format work
+
+1. **Students work in Task Pods of 2–3 for most of the term.** Default to 3 when the cohort is above ~40; keep a handful of pairs so the checkpoint schedule survives. *You never teach a room of 60 individuals — you teach 20–30 pods.*
+2. **Learning goals are the contract; tasks are negotiable.** Every module opens with its goals. Students may replace or skip tasks if they can still demonstrate the goals. That is why you assess conversations, not submissions.
+3. **You rarely lecture.** Most "input" is a pod study (20–30 min) with references and LLM prompts, followed by a concrete exercise and a share with a neighbouring pod. Your job is to walk, listen, and correct.
+4. **Every session has two harvests — collections, not quizzes.** At the break and again at the end, five minutes: students read out the curiosities they *marked while working* (an odd statement, a weird diagram, a bug, a UX surprise) and compare lists. Nobody explains and nobody is assessed; *"I collected these — which did you find?"* is the whole activity. Details in [Module 3](../modules/03-llm-assisted-sql-and-query-profiling.md), and one paragraph in the [syllabus](../syllabus.md#how-we-teach--challenge--and-project-based-in-person-and-always-in-flux).
+5. **Checkpoints are feedback, not an exam.** A short conversation per pod. Points for Modules 1–6 are recorded when you *see* the evidence; the graded assessment happens at the end. See [feedback rounds](./feedback-rounds.md) and the [syllabus](../syllabus.md).
+
+> [!IMPORTANT]
+> **If you teach one technical habit, make it `EXPLAIN QUERY PLAN`.** It is the spine of the second half of this course: it turns "it feels slow" into a claim you can check, it is the only performance skill that still matters when a model writes the SQL, and it appears in every module from 3 to 8 — the final project requires a before/after plan as evidence. Say the command out loud, prefix queries with it in front of the room, and ask "what does the plan say?" before "how long did it take?". Students copy that reflex faster than any slide can teach it.
+
+## The session shape
+
+| Minutes | What happens |
+|---|---|
+| 0–5 | Story or a one-slide hook. Not a lecture. |
+| 5–50 | **Pod study and share** — 30 + 15 min in Modules 2 and 3; 20 + 10 in Module 4; **Modules 5, 6a and 6b replace this with a 15-minute skim (or a 15-minute gate) and self-paced rounds**. In practice studies run **1.5–2× longer** than printed, so treat the printed number as a **hard stop**, not a prediction. |
+| 50–90 | Studio lab, part 1. |
+| 90–105 | **Break — harvest swap 1** (read out the curiosities you marked). |
+| 105–185 | Studio lab, part 2 — checkpoints live here. |
+| 185–195 | **Harvest swap 2** (same, plus what the second half added) and wrap-up. |
+
+Rooms: the schedule is 90 minutes, a 15-minute break, 90 minutes. Protect the break — it is part of the method, not slack.
+
+## The stage-and-gate pattern (Module 5 onward)
+
+Module 5 dropped its pod study and became **seven rounds**: a short primer, a fifteen-minute skim, then small hands-on stages, each with a *“Theory you need”* box and a two-minute **peer gate** at the end. No timer, no synchronised share — the room runs at different speeds on purpose, and a gate board shows you who is stuck.
+
+Use it when the material is **practical enough to start without the theory** and the study has been eating the lab. Do not use it where a shared vocabulary must exist before anyone can act — that is what the 30 + 15 studies in Modules 2–3 are for. **Modules 5, 6a and 6b all use it now**; 6a and 6b are each one session of rounds, not a study followed by a lab.
+
+The full catalogue of formats we considered, the six dials behind them, and the observations we still owe are in **[study formats](./study-formats.md)**. Module 6 has since been split into two stage-and-gate studios (6a, 6b); fill in the observations there before the next redesign.
+
+## Checkpoints are feedback rounds (sessions 4, 8 and 9)
+
+Nothing is graded in a checkpoint. A checkpoint exists so students hear what is missing while it is still cheap to fix.
+
+- **~10 minutes per pod**, in person, from the **existing portfolio** — never from slides prepared for the occasion.
+- **One artefact, one question, one next step.** That is the whole slot.
+- **"Not yet" is a complete answer.** Write it down and move on; do not rescue a pod inside the slot.
+- The round opens with a **peer practice**: two pods present to each other, **12 minutes each way**, with a 3-minute switch for feedback notes. The receiving pod does the **portfolio gate** (own repository, can edit, commit, link) and asks the questions from the manual.
+- **Checkpoint 2 is spread over sessions 8 and 9** — ten pods per session, ten minutes each, while the rest of the room builds. Session 8 covers Modules 4–5; session 9 covers 6a–6b. **If the TA knows the material, run two lanes (five pods each) and finish in ~50 minutes; otherwise the TA helps the working teams and you keep one lane.** With 20 pods this is the difference between a feedback round and a stampede.
+- Students who miss it send a **short video plus a portfolio excerpt**; they get less feedback, and lose no points.
+
+The run sheet, the 10-minute script and the fill-in template live in the **[feedback-round manual](./feedback-rounds.md)**.
+
+## Before your first session (about two hours)
+
+- [ ] Read [Module 1](../modules/01-introduction-and-local-first.md) and [Module 2](../modules/02-data-contracts-and-legacy-schemas.md) — you need to be one module ahead, not six.
+- [ ] Create a GitHub account you will demo from, and check the [portfolio template](https://github.com/iotempire/iot-portfolio-template) still exists.
+- [ ] Install `uv`, `sqlite3` and (optionally) `duckdb` + `datasette` on your own machine — you should feel where students get stuck.
+- [ ] Run one module's **Setup** block by hand, end to end, on a fresh terminal.
+- [ ] If the repo came with a `scratch/` folder (it is git-ignored), run `sh scratch/smoke-test.sh` — it extracts the documented SQL/Python out of each module and checks it still works. If you do not have it, ask the previous instructor; it catches broken code blocks before your students do.
+
+## Slides
+
+There is one deck: [`../slides/01-introduction.md`](../slides/01-introduction.md), plain Markdown, rendered to 16:9 PDF with pandoc + Typst via [`../slides/render-slides.sh`](../slides/render-slides.sh). It is written for session 1 only, on purpose — the rest of the term is not a slide course.
+
+You may of course build more slides. Two honest options:
+
+- **Reuse and edit** the existing deck. It is short, and the notes in [`../slides/01-introduction.md`](../slides/01-introduction.md) are written to be spoken over.
+- **Generate a deck with an LLM**, then fix it. A prompt that works:
+
+  > "You are preparing a 20-minute talk for 3rd-semester engineering students in a databases class. Use **only** the following Markdown as your source: `<paste a module section>`. Produce a Markdown slide deck: one idea per slide, at most 5 bullets, at most 12 words per bullet, no code block longer than 6 lines, and speaker notes for every slide. Mark any claim that is not in the source as `[UNVERIFIED]`."
+
+  Then **run every code block and every error message** in the generated deck. Models invent SQLite error strings, version numbers, and flags with total confidence. A wrong error message on a slide will cost you more credibility than a plain slide ever will.
+
+> [!WARNING]
+> Slides are the crutch this course exists to remove. If you find yourself preparing 60 slides for a studio session, stop: the students should be typing, not watching. Use slides for the story, the goals, and the one table you want everyone to see — nothing else.
+
+## Assessment: do not invent points
+
+Everything about points, checkpoints, reflections, the grade scale, and the project rubric lives in the [syllabus](../syllabus.md). It is the single source of truth; the modules deliberately do not restate it. If a student asks "how many points is this?", the answer is a link, not a number you improvise.
+
+## If you are drowning: the minimum viable session
+
+Run only these four things and the session still works:
+
+1. The **story** (3 min).
+2. The **pod study** (20 min) — even if you do not fully understand the material yet; the pointers and LLM prompts carry it, and you learn by walking around.
+3. **One** core task, not all of them (rest of the time).
+4. **Harvest swap 2** (5 min): compare what they collected, and note the entries nobody could place.
+
+Then read that module's instructor note before the next session. Nobody expects a first run to be polished; the syllabus says as much, in public.
+
+## What to read if you are new to databases
+
+A short path, in this order: [SQLite "Appropriate Uses"](https://www.sqlite.org/whentouse.html) (30 min, resets your instincts about servers) → [Use The Index, Luke](https://use-the-index-luke.com/) (skim the first three chapters) → the [local-first essay](https://www.inkandswitch.com/essay/local-first/) (1 h) → [Story Driven Modeling](https://en.wikipedia.org/wiki/Story-driven_modeling) (the method behind the project) → whatever module you teach next.
+
+## Per-session notes
+
+| Session | Note | Focus |
+|---|---|---|
+| 1 | [01](./01.md) | Pods, portfolio, toolchain. The session most likely to overrun. |
+| 2 | [02](./02.md) | Pod study, legacy schema audit, ER reconstruction. |
+| 3 | [03](./03.md) | Plan safari, LLM-generated SQL, index benchmarks, injection. |
+| 4 | [04](./04.md) | Constraints, triggers, UPSERT — *and checkpoint 1*. |
+| 5 | [05](./05.md) | Dependencies, normalization, measured denormalization. |
+| 6 | [06a](./06a.md) | DuckDB day: 2M rows to Parquet, the race, `EXPLAIN ANALYZE`, the boundary. |
+| 7 | [06b](./06b.md) | JSON, key-value, the server contrast, the decision record and defence. |
+| 8–11 | [07](./07.md) | Project studios with Checkpoint 2 spread over sessions 8–9; demo day in [08](./08.md). |
+| — | [Feedback rounds](./feedback-rounds.md) | The 10-minute script, a 145-minute run sheet, and the fill-in [template](./feedback-template.md). |
+| Course | [Assessment & operations](./00-assessment-and-operations.md) | Assessment form, milestone plan, submission hygiene, group sign-off, re-examination, privacy, AI declaration. |

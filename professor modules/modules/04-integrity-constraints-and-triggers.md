@@ -1,0 +1,264 @@
+# Module 4 — Data Integrity, Constraints & Edge Triggers
+
+[← Back to front page](../README.md) | [Quick module index](./00-index.md) | [Next: Module 5 →](./05-normalization-vs-denormalization.md)
+
+**Course placement:** Session 4. This module covers the legacy *Standard SQL (DDL/DML/DCL)*, *data integrity*, and *triggers and procedures* chapters — reframed as integrity that runs **at the edge**, next to the data, without a server.
+
+## 🎯 Learning Goals
+
+This module gives you the opportunity to explore data-definition, manipulation, and integrity and achieve competency in enforcing rules where the data lives.
+
+By the end of this module, you can:
+1. Create tables with the full constraint toolkit: `NOT NULL`, `UNIQUE`, `CHECK`, `PRIMARY KEY`, `FOREIGN KEY`, and `STRICT` typing.
+2. Use **generated columns** to derive values at the engine instead of in application code.
+3. Write **triggers** that enforce domain rules and maintain audit/rollup tables automatically.
+4. Use **DML** correctly — including `UPSERT` (`ON CONFLICT`) for idempotent edge ingestion.
+5. Reason about **access control (DCL)**: who may read or write, and how that maps from server `GRANT`s to an embedded, local-first world.
+
+## 📖 Story — Trusting the Edge
+
+Wittkamp's machine-shop telemetry used to run through the cloud, until the plant lost its internet connection for two days and lost two days of data with it. The fix is local-first: an **edge gateway** (a small Linux box or an OpenWrt router) writes readings straight into a SQLite file next to the machines. The data never leaves the plant unless someone decides it should.
+
+But "at the edge, without a server" raises the stakes on integrity: there is no DBA to fix a bad row, and no backend to re-validate. The **database itself** must refuse garbage. A temperature of 9,000 °C from a disconnected sensor must be rejected by a `CHECK`. A spindle that overheats must raise an alarm **the moment the row is written**, by a trigger. Replayed readings after a network hiccup must not create duplicates, which is what `UPSERT` is for. In this studio, you make SQLite enforce the rules so the application cannot forget them.
+
+## 📖 Pod Study: Integrity Has Layers
+
+This is **self/pod study, not a lecture** — **20 minutes** in your pod, then **10 minutes** with a neighbouring pod. **Hard stop at minute 20**: the acceptance test and the lab continue the same material. Keep notes in `Module04/integrity-notes.md`, same discipline as [Module 2](./02-data-contracts-and-legacy-schemas.md).
+
+The module handbook lists integrity as a first-class topic. In relational terms there are three layers, and each maps to a concrete SQL feature:
+
+| Layer | Question it answers | SQL mechanism |
+|---|---|---|
+| **Entity integrity** | Is every row identifiable and complete? | `PRIMARY KEY`, `NOT NULL`, `UNIQUE` |
+| **Referential integrity** | Do relationships point at things that exist? | `FOREIGN KEY` (+ `ON DELETE`/`ON UPDATE`) |
+| **Semantic (domain) integrity** | Does the value make sense? | `CHECK`, generated columns, triggers |
+
+**`STRICT` tables (SQLite 3.37+).** SQLite is famously dynamically typed. A `STRICT` table forces every column to hold its declared type, so `'abc'` can never land in a `REAL` column. For edge data you do not control, this is the cheapest bug filter you have.
+
+**Generated columns.** A `VIRTUAL` or `STORED` column computed from other columns by an expression. Use one to derive `energy_kwh = power_w * interval_s / 3.6e6` at the engine, so every reader agrees and no application can compute it wrong.
+
+**Triggers.** `AFTER INSERT`/`UPDATE`/`DELETE` procedures that fire automatically. They are how you keep a derived fact consistent (an alarm, a rollup, an audit trail) without trusting the writer.
+
+**DCL and the embedded twist.** On a server, access control is `CREATE ROLE` + `GRANT SELECT ON ... TO ...`. SQLite has no users or roles — so access control shifts to the **file system** (Unix permissions), **views** that expose a safe subset, and read-only connections (`file:...?mode=ro` or `PRAGMA query_only`). Be ready to explain that trade-off: embedded means fewer knobs, but also a smaller attack surface.
+
+> [!TIP]
+> Trigger bodies must be *declared* in the DDL but *run* on every write. Test their cost: a trigger on a hot ingest path is a design decision, not a free lunch.
+
+### Pointers (start here, then keep looking)
+
+- Foreign keys — and **why they are off by default** — [sqlite.org/foreignkeys.html](https://sqlite.org/foreignkeys.html)
+- [`STRICT` tables](https://www.sqlite.org/stricttables.html) · [generated columns](https://www.sqlite.org/gencol.html) · [triggers](https://www.sqlite.org/lang_createtrigger.html) · [`UPSERT`](https://www.sqlite.org/lang_upsert.html)
+- Read-only access in SQLite — [`PRAGMA query_only`](https://www.sqlite.org/pragma.html#pragma_query_only)
+- **Prefer watching?** [Lecture-style videos for this module](./Z-resources-bank.md#watching-instead-of-reading)
+
+### Questions to ask an LLM (then verify by running it)
+
+- "Explain entity, referential and domain integrity, with one SQL example each — and tell me which one a `CHECK` constraint can never cover."
+- "Here is my `CREATE TABLE`: `<paste it>`. Which of the three layers is unguarded, and what concrete bad row gets through?"
+- "Give me a rule a `CHECK` constraint **cannot** express but a trigger can."
+- "What is the difference between `BEFORE` and `AFTER` triggers, and which one can reject a row?"
+- "Why is `PRAGMA foreign_keys` per connection? What silently breaks when a tool forgets it?"
+
+> Every answer is a **claim to test**. You have a database; use it.
+
+### ★ Task A: Study in your pod (~20 minutes)
+
+**The acceptance test.** Before you build the real schema, prove to yourself what an unconstrained table accepts (and record which strange things the table accepts, be creative here with yout INSERTs - try to break you littel database or at least complain). In a scratch database:
+
+```sql
+CREATE TABLE t(sensor_id INTEGER, metric TEXT, value REAL);
+INSERT INTO t VALUES (1,'temp_c',9000), (1,'temp_c','hot'), (2,'bogus',-500);
+SELECT * FROM t;
+```
+
+All three junk rows land, and nothing complains. Now write the **same** table with the constraints you would actually ship — `STRICT`, `PRIMARY KEY`, `CHECK(metric IN (...))`, `CHECK(value BETWEEN -273.15 AND 5000)` — and re-run the INSERTs aboce adn your own inserts **one at a time**. Record for each: which of the three layers rejected it, and the exact error message.
+
+Two follow-ups worth five minutes: what does `CHECK` do with a `NULL` value (try it), and which of your constraints would still let a *plausible but wrong* value through?
+
+### ★ Task B: Share with another pod (~10 minutes)
+
+- Each pod reads out the most surprising thing an unconstrained table accepted.
+- Which constraint was hardest to get right — `CHECK` with `NULL`, `STRICT` with numbers, or `UNIQUE` over two columns?
+- Agreed points go into `integrity-notes.md`; anything unresolved goes to `#sql-questions`.
+
+## 🛠️ Studio Lab: Make the Database Refuse to Lie — **Challenging**
+
+*Software:* `sqlite3` CLI and Python 3.14.
+
+### Setup
+
+```sh
+mkdir -p Module04
+sqlite3 Module04/edge.db <<'SQL'
+PRAGMA foreign_keys = ON;        -- per-connection, and OFF by default: remember this.
+DROP TABLE IF EXISTS audit;
+DROP TABLE IF EXISTS alarm;
+DROP TABLE IF EXISTS reading;
+DROP TABLE IF EXISTS sensor;
+
+CREATE TABLE sensor(
+    sensor_id   INTEGER PRIMARY KEY,
+    machine_id  TEXT    NOT NULL,
+    metric      TEXT    NOT NULL CHECK (metric IN ('temp_c','vib_rms','spindle_load')),
+    unit        TEXT    NOT NULL,
+    UNIQUE (machine_id, metric)
+) STRICT;
+
+CREATE TABLE reading(
+    reading_id  INTEGER PRIMARY KEY,
+    sensor_id   INTEGER NOT NULL REFERENCES sensor(sensor_id),
+    ts          TEXT    NOT NULL,
+    value       REAL    NOT NULL,
+    interval_s  INTEGER NOT NULL CHECK (interval_s > 0),
+    energy_j    REAL    GENERATED ALWAYS AS (value * interval_s) VIRTUAL,
+    CHECK (value >= -273.15 AND value <= 5000)        -- reject physically impossible values
+) STRICT;
+SQL
+```
+
+### ★ Task 1: Prove the constraints work
+
+Constraints are only real if you have *seen them reject* something. Run each of these and record the exact error.
+
+```sql
+-- valid
+INSERT INTO sensor VALUES (1,'cnc-01','temp_c','degC'), (2,'cnc-01','vib_rms','mm/s');
+INSERT INTO reading(sensor_id, ts, value, interval_s) VALUES (1,'2026-03-01 08:00:00', 41.5, 1);
+
+-- rejected: domain check (impossible temperature)
+INSERT INTO reading(sensor_id, ts, value, interval_s) VALUES (1,'2026-03-01 08:00:01', 9000, 1);
+-- rejected: STRICT type (text into a REAL)
+INSERT INTO reading(sensor_id, ts, value, interval_s) VALUES (1,'2026-03-01 08:00:02', 'hot', 1);
+-- rejected: referential integrity (sensor 99 does not exist)
+INSERT INTO reading(sensor_id, ts, value, interval_s) VALUES (99,'2026-03-01 08:00:03', 40, 1);
+-- rejected: entity integrity (duplicate sensor for the same machine+metric)
+INSERT INTO sensor VALUES (3,'cnc-01','temp_c','degC');
+```
+
+*Portfolio evidence:* each rejected statement and its error message, plus the generated `energy_j` value for the valid row — proof the virtual column computes.
+
+### ★ Task 2: Idempotent edge ingestion with UPSERT
+
+After a network outage, the gateway replays readings. Replayed rows must not duplicate.
+
+```sql
+-- Make (sensor_id, ts) a genuine natural key so replays collide:
+CREATE UNIQUE INDEX ux_reading_sensor_ts ON reading(sensor_id, ts);
+
+-- Replay-safe ingest: insert, or update if the exact reading already exists.
+INSERT INTO reading(sensor_id, ts, value, interval_s)
+VALUES (1,'2026-03-01 08:00:00', 41.7, 1)          -- same key, corrected value (sensor retried)
+ON CONFLICT(sensor_id, ts) DO UPDATE SET value = excluded.value;
+
+-- Show that there is still exactly one row for that key:
+SELECT sensor_id, ts, value FROM reading WHERE sensor_id = 1;
+```
+
+Then write the ingestion loop in Python (`Module04/ingest.py`) that takes a CSV of readings and uses `executemany` with the same `UPSERT`, and run it **twice** on the same file.
+
+*Portfolio evidence:* the `UPSERT` SQL, the Python ingest script, and the row count proving a double run did not duplicate data.
+
+### ★ Task 3: Triggers for alarms and audit
+
+Two triggers: one raises an alarm when a threshold is crossed, one writes an immutable audit trail of every value change.
+
+```sql
+CREATE TABLE alarm(
+    alarm_id  INTEGER PRIMARY KEY,
+    sensor_id INTEGER NOT NULL REFERENCES sensor(sensor_id),
+    ts        TEXT NOT NULL,
+    value     REAL NOT NULL,
+    reason    TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE audit(
+    audit_id  INTEGER PRIMARY KEY,
+    reading_id INTEGER NOT NULL,
+    old_value REAL,
+    new_value REAL,
+    changed_at TEXT NOT NULL DEFAULT (datetime('now'))
+) STRICT;
+
+-- 1. Semantic rule enforced at write time: vibration above 2.0 mm/s raises an alarm.
+CREATE TRIGGER trg_vib_alarm
+AFTER INSERT ON reading
+FOR EACH ROW
+WHEN NEW.value > 2.0 AND (SELECT metric FROM sensor WHERE sensor_id = NEW.sensor_id) = 'vib_rms'
+BEGIN
+    INSERT INTO alarm(sensor_id, ts, value, reason)
+    VALUES (NEW.sensor_id, NEW.ts, NEW.value, 'vibration over 2.0 mm/s');
+END;
+
+-- 2. Audit every update, automatically.
+CREATE TRIGGER trg_reading_audit
+AFTER UPDATE OF value ON reading
+FOR EACH ROW
+BEGIN
+    INSERT INTO audit(reading_id, old_value, new_value)
+    VALUES (NEW.reading_id, OLD.value, NEW.value);
+END;
+```
+
+Now exercise them:
+
+```sql
+INSERT INTO reading(sensor_id, ts, value, interval_s) VALUES (2,'2026-03-01 09:00:00', 2.7, 1);  -- alarm!
+UPDATE reading SET value = 1.4 WHERE sensor_id = 2;                                              -- audit!
+SELECT * FROM alarm;
+SELECT * FROM audit;
+```
+
+*Portfolio evidence:* the trigger DDL, the alarm row and audit row they produced, and a measured note on trigger cost (time an ingest of 10,000 rows with and without the alarm trigger).
+
+### ★ Task 4: Access control without a server
+
+There is no `GRANT` in SQLite, so demonstrate the embedded substitute. **Create the view first** (while the file is still writable), then lock the file down.
+
+```sh
+# 1. Expose a safe subset with a view, and hand *that* to report readers:
+sqlite3 Module04/edge.db "CREATE VIEW machine_health AS
+  SELECT s.machine_id, s.metric, MAX(r.value) AS peak, COUNT(*) AS n
+  FROM sensor s JOIN reading r USING(sensor_id) GROUP BY s.machine_id, s.metric;"
+
+# 2. Read-only at the file level (the strongest, simplest control):
+chmod 444 Module04/edge.db
+
+# 3. Read-only at the connection level:
+sqlite3 "file:Module04/edge.db?mode=ro" "SELECT COUNT(*) FROM reading;"
+sqlite3 "file:Module04/edge.db?mode=ro" "DELETE FROM reading;"   # must fail
+
+# 4. Restore write access for your own further work:
+chmod 644 Module04/edge.db
+```
+
+Write 3–4 sentences: **how would this differ with a PostgreSQL server, and why is file-permission-based control acceptable here but not for a multi-tenant web app?**
+
+*Portfolio evidence:* the `chmod`/`mode=ro` commands and their outcomes, the `machine_health` view, and your comparison note.
+
+### ◇ Task 5 (Stretcher): Break your own alarm
+
+Switch the alarm trigger to `BEFORE INSERT` and observe the difference; or add an `INSTEAD OF` trigger on a view. Document what changes and why `AFTER` was the right default here.
+
+## ✅ Suggested portfolio evidence (proofs of the learning goals)
+
+
+- [ ] The setup script (`STRICT` tables, generated column, constraints).
+- [ ] The rejected-statement evidence for each constraint with its exact error message.
+- [ ] The `UPSERT` SQL, `ingest.py`, and the double-run row-count proof.
+- [ ] The alarm and audit trigger DDL plus the rows they produced, and the trigger-cost measurement.
+- [ ] The access-control demonstration (`mode=ro`, `chmod`, a view) and your comparison note.
+- [ ] `Reflections/ref04.md` — the logbook entry for this block, using the [reflection template](https://github.com/iotempire/iot-portfolio-template/blob/main/Reflections/TEMPLATE.md).
+- [ ] (Stretcher) the trigger-timing variant and what it changed.
+
+## 📚 If you want to go deeper
+
+- SQLite — `STRICT` tables — [sqlite.org/stricttables.html](https://www.sqlite.org/stricttables.html)
+- SQLite — generated columns — [sqlite.org/gencol.html](https://sqlite.org/gencol.html)
+- SQLite — `UPSERT` and triggers — [sqlite.org/lang_upsert.html](https://www.sqlite.org/lang_upsert.html) · [sqlite.org/lang_createtrigger.html](https://www.sqlite.org/lang_createtrigger.html)
+- SQLite — foreign key support (and why it is off by default) — [sqlite.org/foreignkeys.html](https://www.sqlite.org/foreignkeys.html)
+
+**⬆︎ ===== DRAFT BOUNDARY — everything above is settled for this run ===== ⬆︎**
+
+---
+
+[← Previous: Module 3](./03-llm-assisted-sql-and-query-profiling.md) | [Back to front page](../README.md) | [Next: Module 5 →](./05-normalization-vs-denormalization.md)

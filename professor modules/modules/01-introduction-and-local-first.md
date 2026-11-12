@@ -1,0 +1,604 @@
+<!--# Module 1 — Introduction & Local-First Foundations-->
+
+[← Course workbook](../README.md) | [Quick module index](./00-index.md) | [Next: Module 2 →](./02-data-contracts-and-legacy-schemas.md)
+
+**Course placement:** Session 1 — the first class. We open with a short introduction to **how this class works** (Part A), then run this module's studio in the same session, together and in person.
+
+## 🎯 Learning Goals
+
+By the end of this module, you can:
+1. Explain how this class works — the CBL/PBL philosophy, the portfolio-based **project work** assessment, and the "moving bar" of a first-time course.
+2. Set up your personal GitHub portfolio from the course template, with a clean first commit and a `.gitignore` that keeps databases and secrets out of Git.
+3. Set up the entire toolchain reproducibly with **`uv`** — one fixed Python plus SQLite, DuckDB, Datasette, and more — on Windows, macOS, or Linux, and verify it.
+4. Explain — with a measurement, not a slide — the difference between an **embedded** database and a **client/server** database, and why most local apps should not run a server.
+5. Load real rows into SQLite and query them from Python using **bound parameters**.
+6. Take a first LLM-generated query, run it, and begin the habit that defines this course: **verify before you trust**.
+
+## 📖 Part A — Opening the Class (plain-Markdown slides)
+
+**This session is presented from a plain-Markdown slide deck** — [`slides/01-introduction.md`](../slides/01-introduction.md). It opens in any Markdown viewer (Zed, GitHub, VS Code), and renders to a **16:9 PDF with `pandoc` + `typst`** — [`slides/render-slides.sh`](../slides/render-slides.sh) — which is presented fullscreen in **Okular**. Slides are separated by a `---` line, so the deck is just Markdown: easy to read, diff, and adapt. The opening runs in six beats:
+
+1. **whoami — meet your lecturer.** Ulno: educator / consultant / mentor, researcher / inventor / maker / artist, YouTuber ([youtube.ulno.net](https://youtube.ulno.net/)); a globalist who has lived, taught, and researched in Estonia, the USA, Germany, Austria, Kazakhstan, Singapore, Indonesia, and Brazil; research in VR/AR, IoT, digital twins, software craftsmanship, and education; PhD on **home automation** (RWTH Aachen).
+2. **Who are U? — a quick hand-count.** I ask, you raise a hand (and **note your answers — this is your first portfolio entry**): programming experience and languages; prior **SQL**; which **databases** you have used; **Python**; the **command line**; **Git/GitHub**; whether you have built a **web app** or run a **server**; and — the important one — **your expectations** from this class.
+3. **"This is an experiment" — the deal.** We teach with modern, challenge- and project-based methods: you are here to learn and explore, you are front and center, and you bring a meaningful challenge. Logistics: usually **no dedicated homework** (but you finish lab work, module tasks, portfolio, and reflections); **you work in small Task Pods — two or three (three by default)** (a few pairs), and **two pods merge into a Project Team for the final project**; in-class exercises start individually; feedback is continuous in the lab; the final grade comes from **module points, the final project, and reflections**, all recorded in your **portfolio**.
+4. **Everything lives in the online workbook.** We open the repository together: the **[module index & roadmap](./00-index.md)** (every module and session) and the **[syllabus](../syllabus.md)** (schedule, objectives, assessment, policies). This is where "how the class works" becomes concrete — see the contract below.
+5. **Pod formation.** Last, we form **Task Pods** (see the pod note — three is the default for this cohort).
+6. **Warm-up and discovery — the first pod exercise.** Right after you form pods: a quick warm-up (*what is a database?*, *why SQL?*, *a bit of local-first*) as a pod jigsaw, flowing straight into the Discovery exercise (*what two shapes can a database take?*). We collect your answers, then reveal the table.
+
+### How the class works — the contract
+
+**Here we open the [syllabus](../syllabus.md) together.** The full model lives there — the learning-goals contract, the **project work** assessment, the ★/◇ task tiers, and the “draft in motion” boundary. The one-line version: each module **begins with its learning goals**, those goals are the *contract*, and the tasks are negotiable as long as you reach the goals.
+
+**AI is a tool you must verify, not an oracle.** You will use Copilot/ChatGPT/Claude/DeepSeek (or a local model) throughout — to draft SQL, review schemas, and explain errors. What matters is your *judgment*: does it run, is it correct, is it fast, is it safe? Every module has a "how did I verify AI suggestions?" step in its reflection.
+
+Practical note: the class has **11 four-hour sessions**, plus **optional tutorial sessions** run by a teaching assistant (times announced via the LMS).
+
+### Form your Task Pod — who do you build with?
+
+You will do the labs and the checkpoints in a **Task Pod** — two or three people (three by default for this cohort; a few **two-person pods** are welcome, since they cut the number of checkpoints the instructor must run; a fourth member only by arrangement). For the **final project, two pods merge into a Project Team of 4–6**. We do a short match-making round:
+
+> **Why “Task Pod”?** In container orchestration (Kubernetes) a *pod* is the **smallest deployable unit** — a couple of tightly-coupled containers that are scheduled, run, and retired together. Your Task Pod is the same, for people: a tight little crew that owns one task end-to-end. Two pods later merge into a **Project Team**, the larger unit that ships the whole application.
+
+1. On a note, write down **your skills** (languages, tools, hardware, design, …) and **your expectations / what you want to build**.
+2. No pod yet? Find **two other unpaired people**, compare notes, and check whether you **complement** each other — not merely whether you are alike. A pod with complementary strengths beats a pod of clones.
+3. Exchange contacts and a first idea today. If you already have a pod, still share your notes so the room knows who can help with what.
+
+> [!TIP]
+> **Checkpoints can run as a 2-pod practice round.** Two pods pair up: each presents its learning-goal proof while the other gives **free-style feedback and questions**, checking how well the goals were proven. **This is feedback, not assessment** — nothing is graded there; see the [syllabus](../syllabus.md#how-module-points-are-earned-from-your-portfolio). A pod you practise with is also a natural **Project Team partner** — the project merges two pods into a Project Team of 4–6.
+
+> [!NOTE]
+> **Instructor hint — presenting the deck.** The slides are plain Markdown ([`slides/01-introduction.md`](../slides/01-introduction.md)). Read them in any Markdown viewer (Zed, GitHub — `---` shows as a horizontal rule), or render a 16:9 PDF and present it fullscreen: `./slides/render-slides.sh slides/01-introduction.md` builds the PDF with **pandoc + Typst** and opens it in **Okular's presentation mode**. From Zed, use the task *“Slides → PDF (pandoc + Typst) + Okular”* (command palette → `task: spawn`) to render the current file. HTML comments (`<!-- Note: … -->`) are dropped from the PDF, so keep speaker hints there; the discovery answer sits on the slide *after* the prompt, so reveal it by advancing. There is no notebook runtime and no build step — run the Python on demand from your `uv` environment. Full hints in the [resource bank](./Z-resources-bank.md#instructor-hints-presenting-the-markdown-slide-deck).
+
+## 📖 Story — The Server Nobody Needed
+
+**Wittkamp Zerspanung GmbH** is a small machine shop in Gütersloh that wants to monitor its CNC milling machines. The vendor **Cirrus Cloud Systems** proposes the classic setup: a cloud server, a PostgreSQL instance, a REST backend, a React frontend, and a monthly invoice. The plant manager, **Kai Lehmann** — an HSBI Industrial Engineering alum — asks one question the vendor cannot answer cheaply: *"How many rows per day, and who else is reading this?"*
+
+The answer: about **90,000 readings a day** (a temperature, a vibration RMS, and a spindle-load value every few seconds across three machines), read by **one** dashboard on the shop floor and **one** weekly shift report. That is a few hundred megabytes a year, touched by two readers, on a network that already exists. A three-tier cloud stack here is a **programming antipattern**: more moving parts, more failure modes, more cost, and no benefit. (For the industry consensus forming around this, see the [local-first manifesto](https://www.inkandswitch.com/essay/local-first/) and SQLite's own ["SQLite competes with `fopen()`"](https://www.sqlite.org/whentouse.html).)
+
+What Wittkamp actually needs is a database that runs **inside the monitoring script** — an embedded engine that speaks SQL, needs no administrator, cannot go "down", and travels with the data file. That engine is **SQLite**. In this first studio you will meet it the same way: load a couple of days of machine telemetry, query it, and profile the AI's first suggestion.
+
+## 📖 Part B — Discovery: Embedded vs. Client/Server
+
+Instead of a slide that tells you the answer, we **figure it out together** — you may already know more than you think.
+
+**In your pod, a few minutes:**
+
+1. **Brainstorm.** When does a database live *inside* your program, and when does it live on a *separate server*? Give each shape a name.
+2. **List trade-offs.** Write **one advantage and one cost** for each shape — think about installation, reliability, concurrency, cost, and who owns the data.
+3. **Search (optional).** Look up two concrete engines for each shape — e.g. an embedded one and a client/server one — and one sentence on when to use each.
+4. **Jigsaw.** One of you joins a neighbouring pod, the rest stay. **Merge your two lists**, drop duplicates, and mark whatever you disagree on.
+
+Wait before you scroll on and do first soem thinking at your own.
+
+Then the instructor reveals the table and we compare:
+
+**Two shapes of a database:**
+
+| | Embedded (SQLite, DuckDB) | Client/server (MySQL, PostgreSQL) |
+|---|---|---|
+| Where it runs | Inside your process, as a library | A separate server process you connect to |
+| Admin needed | None | Users, auth, backups, tuning, upgrades |
+| Reliability | "Down" is not a state — no server to fall over | Network + server + credentials are failure modes |
+| Concurrency model | Many readers, **one writer** at a time | Many concurrent writers |
+| Sweet spot | Local apps, edge devices, single-node analytics, tests | Many concurrent clients, networked multi-user apps |
+| Cost | Zero infrastructure | A server, an operator, a bill |
+
+**Did your version beat ours?** If your jigsaw found something the table misses — backup strategy, latency, offline work, or total cost of ownership — **add it**. The table is a draft, exactly like the tasks.
+
+**The local-first principle.** Keep the data on the machine that produces and consumes it. Ship a file, not a deployment. Go to a server only when a *measured* requirement — concurrent writers, geographic distribution, or a shared multi-tenant service — forces you to. Real systems now bet on exactly this: an entire Fediverse server ([GoToSocial](https://gotosocial.org), SQLite by default) and a whole team-chat platform ([Chatto](https://www.hmans.dev/blog/chatto)) each ship as a **single binary**, no separate database service — see the [case studies in the project kickoff](./07-final-project-studio.md#read-before-the-kickoff-systems-that-broke-the-classic-stack).
+
+> [!TIP]
+> **This is a documented industry shift, not a hobby opinion.** The [local-first manifesto](https://www.inkandswitch.com/essay/local-first/) named the movement; [Rails 8 made SQLite the production default and dropped the Redis/PaaS dependencies](https://rubyonrails.org/2024/11/7/rails-8-no-paas-required); and the hypermedia revival ([htmx's *Locality of Behaviour*](https://htmx.org/essays/locality-of-behaviour/)) is collapsing the front-end/back-end split for typical apps. The [resource bank](./Z-resources-bank.md#why-local-first-and-why-the-heavy-three-tier-default-is-questioned) has the full reading list — including when a server *is* the right tool.
+
+**Why we still learn the "server" vocabulary.** The ANSI three-level architecture, transactions, ACID, and Codd's relational rules (the legacy introduction chapter) describe *all* relational systems. SQLite implements transactions and ACID perfectly well; understanding them here transfers directly to any server you meet later. And when a workload genuinely needs a server (Module 6b), you will recognize it because you will have the measurement that proves it.
+
+> [!TIP]
+> SQLite is the most widely deployed database engine in the world — it is inside every phone, browser, and aircraft you use. "Embedded" is not "toy".
+
+## 🛠️ In-Class Studio: Your First Local-First Database — **Challenging**
+
+*Software:* a laptop with Python 3.14 and Git. You will use a terminal for the SQL labs, but you can do the Git work from your editor or the browser. No server, no admin rights required.
+
+### ★ Task 1: Form your pod and create your portfolio
+
+1. **Team up first.** Form your **Task Pod** (two or three people — see *Form your Task Pod* above). Exchange contacts and agree how you will keep in touch.
+2. **Create your own repo from the template — on the web, “Use this template”, not “Fork”.** Open the [iot-portfolio-template](https://github.com/iotempire/iot-portfolio-template) and click **Use this template → Create a new repository**; name it `databases-portfolio` and make it **public** (or at least readable by the instructor). *(A template gives you a fresh repo with one clean commit and no upstream link; a fork keeps a link and the full history — not what a personal portfolio wants. See the [Git & GitHub primer](./Z-resources-bank.md#git--github-primer-template-editor-markdown-conflicts).)*
+3. **Check out (clone) YOUR new repo — recommended with `gh` (Cheat sheet A), then open the folder in your editor.** All options use **HTTPS with a browser sign-in** — **no SSH keys**. Not installed yet? See [install Git and GitHub tools](./Z-resources-bank.md#install-git-and-github-tools-windows-macos-linux).
+4. **Make it yours — turn the generic template into your own HSBI Databases portfolio.** Change everything directly visible: the README title and description, your name, the links, and any template placeholders. It should read as *your* HSBI Databases portfolio, not the stock `iot-portfolio-template` copy.
+5. **Add your instructor as a collaborator** (repo → *Settings → Collaborators → Add people*). Use the address your instructor posts in the LMS.
+6. **Add this module's learning goals.** Create `Module01/README.md` and copy the *Learning Goals* from the top of this page into it, with a one-line note of what you plan to explore.
+7. **Verify the `.gitignore`** keeps local data and secrets out of Git.
+8. **Commit and push** from your editor's Git UI (VS Code **Source Control** / Zed **Git panel**) with a message like `Add Module01 learning goals`.
+
+**Cheat sheet A — GitHub CLI `gh` (recommended).** Use it **once**, just to clone.
+
+```sh
+gh auth login                              # once: GitHub.com → HTTPS → "Login with a web browser"
+gh repo clone <you>/databases-portfolio    # the ONLY gh command you need
+```
+
+Then **open the `databases-portfolio` folder in VS Code or Zed** and do the rest there — commit, push, and pull from the editor's Git UI (see the [Git & GitHub primer](./Z-resources-bank.md#git--github-primer-template-editor-markdown-conflicts)).
+
+**Cheat sheet B — GitHub Desktop (point-and-click option).**
+
+1. Install **GitHub Desktop** ([desktop.github.com](https://desktop.github.com/)) and sign in via the browser.
+2. **File → Clone repository → GitHub.com**, pick **your** `databases-portfolio`, choose a folder, click **Clone**.
+3. Commit and **Push origin** from the same window.
+
+**Cheat sheet C — plain `git` over HTTPS (option).**
+
+```sh
+git clone https://github.com/<you>/databases-portfolio.git
+cd databases-portfolio
+git status
+```
+
+When Git asks for a password, paste a [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) — **not** your account password.
+
+> **In VS Code or Zed?** Command palette → **Git: Clone**, paste the HTTPS URL, and sign in to GitHub when asked. (This is the route that tripped people up in class: the plain **Clone** dialog needs the **HTTPS** URL, and *your* repo — not the template.)
+>
+> **"Repository not found"?** You must clone **your** new repository, not the template. Check the owner/name in the URL, and make sure you are signed in to the right GitHub account.
+
+At minimum, your `.gitignore` should contain:
+
+```gitignore
+# local data and secrets stay out of the repository
+.venv/
+*.db
+*.db-journal
+*.duckdb
+*.parquet
+.env
+__pycache__/
+```
+
+*Portfolio evidence:* the link to **your** repository (and your local clone), the instructor listed as a collaborator, and your first commit.
+
+### ★ Task 2: Git & Markdown proficiency in the pod
+
+Git here is a *habit*, not a command list — do it with the **buttons in your editor's Git UI** (VS Code *Source Control* / Zed *Git panel*) or right on the **GitHub website** (see the [Git & GitHub primer](./Z-resources-bank.md#git--github-primer-template-editor-markdown-conflicts)).
+
+1. **Several small commits** across the session, each message saying *what* changed (e.g. `Add uv-check output`, `Fix telemetry query`).
+2. **Write Markdown with interlinks.** In `Module01/README.md`, link to your pod mates' portfolios, the [syllabus](../syllabus.md), the module you are working on, and any shared artifact. Markdown — headings, lists, tables, links — *is* the deliverable.
+3. **Work as a pod, and say who did what.** Split tasks; if you did **not** do something entirely on your own, **link** the pod mate or source you worked with. **Audit each other** (run their query, read their plan) and **change roles often** — take turns being the one who commits, checks, and explains.
+
+*Portfolio evidence:* a short commit history, and a Markdown page with at least three working interlinks (including one to a pod mate's portfolio).
+
+### ★ Task 3: Install your whole toolchain with `uv`
+
+One tool, three platforms. **`uv`** (from Astral) installs a **fixed Python version**, creates an isolated environment, and installs every library and command-line tool this course uses — SQLite tooling, DuckDB, Datasette, and more — with the *same commands* on Windows, macOS, and Linux. Do this inside your portfolio repo, so your environment is part of your reproducible evidence.
+
+**1. Install `uv` (once per machine).**
+
+macOS / Linux:
+
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Or via a package manager: `brew install uv` (macOS), `winget install --id=astral-sh.uv -e` (Windows), `scoop install uv` (Windows).
+
+Open a **new** terminal and confirm: `uv --version`.
+
+**2. Pin the Python we use and add every library at once.** Run this at the root of your portfolio repo:
+
+```sh
+uv init --name databases-portfolio     # skip if a pyproject.toml already exists
+uv python install 3.14                 # uv downloads and manages the fixed Python
+uv python pin 3.14                     # writes .python-version — the one version you pin by hand
+uv add duckdb datasette sqlite-utils pydantic sqlalchemy
+```
+
+`uv` resolves everything, writes `pyproject.toml`, creates an isolated `.venv/`, and **locks exact versions in `uv.lock`**.
+
+> [!NOTE]
+> **Pin the Python; lock the libraries.** The only version you pin by hand is Python (`uv python pin 3.14`). Everything else is pinned by the committed `uv.lock`, which records the exact version of every package *and every transitive dependency*. Committing `.python-version` and `uv.lock` is what reproduces your environment on the reviewer's machine.
+>
+> **What this course was tested with (Python 3.14.7):** `duckdb 1.5.6`, `datasette 0.65.5`, `sqlite-utils 4.2.1`, `pydantic 2.14.0`, `sqlalchemy 2.1.4`. If you want those versions written into `pyproject.toml` explicitly, add them pinned:
+>
+> ```sh
+> uv add "duckdb==1.5.6" "datasette==0.65.5" "sqlite-utils==4.2.1" "pydantic==2.14.0" "sqlalchemy==2.1.4"
+> ```
+>
+> **If `uv add` fails to resolve or build a package,** confirm the interpreter is really installed with `uv python list` and re-run. A brand-new Python release can run ahead of prebuilt wheels, so `uv` falls back to building from source and may fail; pinning a widely-supported version avoids that. We standardize on **Python 3.14** because the whole stack installs cleanly there (verified for this course). If you change the Python, change it in `.python-version` **and** re-run `uv lock` so the lockfile matches.
+
+**3. Install the command-line tools — and the `sqlite3` shell.** Install the Python-based helpers globally (isolated, available from any folder):
+
+```sh
+uv tool install litecli       # a friendly interactive SQLite shell
+uv tool install datasette     # explore/publish SQLite databases
+uv tool install sqlite-utils  # SQLite from the command line
+```
+
+Then make sure the **`sqlite3` command-line shell** itself is present — we lean on it all term (dot-commands, `.import`, `.timer`, `.dump`). Check it:
+
+```sh
+sqlite3 --version
+```
+
+- **macOS:** already installed (the system ships one); for a current build, `brew install sqlite`.
+- **Linux:** Debian/Ubuntu `sudo apt install sqlite3` · Fedora/RHEL `sudo dnf install sqlite`.
+- **Windows:** **not** installed by default — install it (`winget install SQLite.SQLite`, or `scoop install sqlite`); it also ships inside **Git Bash** — and run the labs in your editor's terminal, pointed at Git Bash ([see how](./Z-resources-bank.md#where-to-run-the-labs-your-editors-terminal)).
+- **Can't install it?** Python's built-in `sqlite3` and the `sqlite-utils` / `litecli` tools cover all the *SQL*; only the shell's *dot-commands* are shell-specific. You will meet those in the next task.
+
+**4. Verify everything with one script (your first Python test).** Save this as `uv-check.py` in your portfolio and run it *inside the project*:
+
+```python
+import sys, platform, sqlite3
+from importlib.metadata import version, PackageNotFoundError
+
+print("uv-managed Python:", sys.executable)
+print("python            ", platform.python_version())
+print("sqlite (stdlib)   ", sqlite3.sqlite_version)
+for pkg in ("duckdb", "datasette", "sqlite-utils", "pydantic", "sqlalchemy"):
+    try:
+        print(f"{pkg:18s}", version(pkg))
+    except PackageNotFoundError:
+        print(f"{pkg:18s}", "NOT INSTALLED")
+```
+
+```sh
+uv run uv-check.py
+```
+
+> [!NOTE]
+> **Run Python through `uv run`.** From here on, run Python as `uv run python yourscript.py` (or `uv run uv-check.py`) instead of `python3`. That guarantees everyone uses the same fixed Python and the pinned libraries — no “works on my machine”.
+>
+> **`uvx` (run without installing).** `uvx datasette Module01/telemetry.db` runs a tool on the fly — handy for a quick look without a permanent install.
+
+*Portfolio evidence:* the `uv run uv-check.py` output, plus committed `pyproject.toml` and `uv.lock` files (do **not** commit `.venv/`).
+
+> [!NOTE]
+> **Prefer Anaconda? (we mention this once.)** We use [**`uv`**](https://docs.astral.sh/uv/) in this class because it is modern, fast, and a single tool for the whole job — the Python version, the isolated environment, and the packages. If you already live in **Anaconda**, you can translate every `uv` step in this course to `conda`; nothing later depends on `uv` specifically.
+>
+> | `uv` (this class) | Anaconda equivalent |
+> |---|---|
+> | `uv python install 3.14` | `conda create -n databases python=3.14` |
+> | `uv python pin 3.14` | (the environment pins the version for you) |
+> | `uv add duckdb datasette sqlite-utils pydantic sqlalchemy` | `conda activate databases` then `conda install -c conda-forge duckdb datasette sqlite-utils pydantic sqlalchemy` |
+> | `uv tool install litecli` | `pipx install litecli` (a dedicated tool installer, like `uv tool`) |
+> | `uv run python script.py` | `python script.py` (with the environment activated) |
+>
+> Read every `uv run python …` below as “run Python inside your course environment” — in Anaconda, activate the environment and run `python …` instead.
+
+### ★ Task 4: Meet the `sqlite3` shell
+
+The `sqlite3` shell is a tool with its own commands — **dot-commands**, starting with `.` — that are *not* SQL. You will use them all term, so learn the handful of essentials now. This tour is self-contained: it uses a throwaway database.
+
+**Where this happens.** Run everything from the **root of your portfolio repo** (the folder that contains `Module01/`). The throwaway database is created **inside your repo**, at **`Module01/tour.db`** — and it is deliberately **not committed**: your `.gitignore` ignores `*.db`, so it will **not** appear in `git status` or on GitHub. That is expected; only `shell-tour.txt` and `tour.sql` are committed.
+
+Create the folder if needed, then start an interactive session:
+
+```sh
+mkdir -p Module01
+sqlite3 Module01/tour.db
+```
+
+> **"unable to open database file"?** The shell could not create the file — almost always the `Module01/` folder is missing or you are not at the repo root. Run `mkdir -p Module01`, make sure you are at the **root of your portfolio repo**, and try again. After you `.quit`, confirm it with `ls -l Module01/tour.db`.
+
+At the `sqlite>` prompt, type these (dot-commands need no semicolon; SQL does). You can enter them one line at a time, or enable pasting (below) and paste the whole block.
+
+> [!IMPORTANT]
+> **Can't paste a block into the `sqlite>` prompt? That is *bracketed paste* — not you, and not a broken SQLite.** Modern terminals wrap a paste in “bracketed paste” markers because **readline** (which `sqlite3` uses — it is built with `libreadline`) asks for it; readline then inserts the whole paste as a **single line**, so `.mode column` receives `.headers on SELECT …` as arguments (`bad argument`). If the block starts with `--`, the shell instead treats the whole block as **one SQL statement** and waits at `...>` for a `;`. Copying through a text editor does **not** help — the terminal re-adds the markers when you paste.
+>
+> **Fix it once (best):** append `set enable-bracketed-paste off` to `~/.inputrc` — i.e. `echo 'set enable-bracketed-paste off' >> ~/.inputrc` — then open a new terminal. A multi-line paste now runs line by line.
+>
+> **Or skip pasting:** save the lines as `Module01/tour-commands.sql` and run `sqlite3 Module01/tour.db < Module01/tour-commands.sql`, or type `.read Module01/tour-commands.sql` in the prompt. **Or just enter one line at a time.**
+
+> [!WARNING]
+> **Dot-commands are not SQL — never append a `-- comment` to one.** The shell reads *everything after a dot-command* as its arguments: `.mode column -- readable` fails with `Unknown option: "--"`, and `.dump -- …` would filter the dump instead of dumping everything. Put `--` comments on their **own line** (as below), or use them **only on SQL lines**.
+
+```sql
+-- list every dot-command (this prints a long help — that is expected)
+.help
+
+-- SQL: create a table and add rows (SQL ends with ; — dot-commands do not)
+CREATE TABLE reading(machine TEXT, vib REAL);
+INSERT INTO reading VALUES ('cnc-01', 1.2), ('cnc-02', 2.4), ('cnc-01', 0.9);
+
+-- what tables exist now?
+.tables
+
+-- the CREATE statement that made it
+.schema reading
+
+-- readable, aligned columns with a header
+.mode column
+.headers on
+SELECT machine, max(vib) AS peak FROM reading GROUP BY machine;
+
+-- the same query, now timed (CPU time)
+.timer on
+SELECT machine, max(vib) AS peak FROM reading GROUP BY machine;
+
+-- leave the shell
+.quit
+```
+
+> [!IMPORTANT]
+> **About `.timer on` — and why you might "see nothing".** `.timer` is a **shell dot-command**, not SQL: it does **not exist in Datasette** (or in a Python string), and it is not something you `SELECT`. When it is on, the shell prints a `Run Time: real … user … sys …` line *after* each statement (in a one-shot run it prints a single line at the end). The usual reasons it looks like it does nothing:
+> - you issued a **one-shot** query, `sqlite3 db "SELECT …"` — a dot-command is a *setting*, so enable it in the same run: `sqlite3 -cmd ".timer on" db "SELECT …"`; or
+> - you were in a different tool (**Datasette**, `litecli`, Python), where `.timer` is simply not a command; or
+> - the query is so fast that `real` rounds to `0.000…` — that is a real measurement, not a failure ([batch the repetitions](./Z-resources-bank.md#timing-a-query-that-is-too-fast-to-time) to make it visible).
+> `.timer` prints `real` (wall clock) **and** `user`/`sys` (CPU). Read `real` for "how long did it take"; `user`+`sys` tells you how much of that was actual computing. For numbers you can compare across tools, see [Measuring query time](./Z-resources-bank.md#measuring-query-time).
+
+**Capture a session to a file** (excellent portfolio evidence). The shell can redirect its output:
+
+```sql
+-- send everything from here into a file
+.output Module01/shell-tour.txt
+.tables
+.schema reading
+SELECT machine, max(vib) AS peak FROM reading GROUP BY machine;
+
+-- the whole schema + data as SQL
+.dump
+
+-- back to the screen
+.output stdout
+.quit
+```
+
+**Your drill:** using only the shell (type it, or save it as `Module01/tour-commands.sql` and `.read` it), produce in `Module01/`:
+1. `shell-tour.txt` — a captured session showing `.tables`, `.schema`, and one query run under `.timer on`;
+2. `tour.sql` — a `.dump` of `tour.db` (use `.output Module01/tour.sql` before `.dump`);
+3. one sentence: which dot-command you found most useful, and why.
+
+(`tour.db` itself is throwaway and stays out of Git — your two text files are the deliverable, and `tour.db` can always be rebuilt by repeating the tour.)
+
+*Portfolio evidence:* `Module01/shell-tour.txt` and `Module01/tour.sql`.
+
+### ★ Task 5: Play SQL Island (~30 minutes)
+
+Before you write any generated SQL, build some *intuition* by playing a game. [SQL Island](https://sql-island.informatik.uni-kl.de/) is a free, browser-based text adventure that teaches the basics of SQL — no install, no account. (It defaults to German; switch the language in the menu.)
+
+Play for about **30 minutes**, then answer these **tutorial questions** in `Module01/sql-island.md` — your first “what have I learned?” reflection:
+
+1. **What have you learned about databases and SQL so far, just by playing?** (Answer from the game alone — no looking things up.)
+2. Which SQL commands and patterns did you actually use (`SELECT`, `WHERE`, `ORDER BY`, joins, aggregate functions, …)?
+3. In your own words — after playing — what is a table, a row, a column, and a query?
+4. What surprised you? What is still confusing?
+
+Then continue with the next tasks — but **leave the SQL Island tab open and finish the game at home**; you do not have to reach the end in class.
+
+*Portfolio evidence:* `Module01/sql-island.md` with your answers, plus a screenshot of your progress while playing the game (one at a later, advanced stage). More practice games are in the [resource bank](./Z-resources-bank.md#goody-sql-practice-games) if you want more.
+
+### ★ Task 6: Load real telemetry and query it from Python
+
+**Step 1 — create the folder and the generator.** Save the following as `Module01/generate_telemetry.py`. It manufactures a few days of machine-shop readings from the Wittkamp story — one reading every few seconds, three machines. `cnc-02` develops a slow **bearing wear**, so its vibration creeps toward the alarm threshold. The random seed is fixed, so everyone gets the same numbers.
+
+```sh
+mkdir -p Module01
+```
+
+```python
+"""Manufacture a few days of machine-shop telemetry as CSV.
+
+Run with:  uv run python Module01/generate_telemetry.py
+Writes telemetry.csv next to this script, so it works from any working directory.
+"""
+import csv, math, random
+from pathlib import Path
+from datetime import datetime, timedelta
+
+random.seed(42)
+machines = ["cnc-01", "cnc-02", "cnc-03"]
+start = datetime(2026, 1, 5, 6, 0, 0)          # Monday 06:00, shift start
+days = 2
+step = 3                                        # one reading every 3 s per machine
+points = days * 24 * 60 * 60 // step            # 57,600 points x 3 machines
+
+out = Path(__file__).with_name("telemetry.csv")
+with out.open("w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["ts", "machine", "temp_c", "vib_rms", "spindle_load"])
+    for i in range(points):
+        ts = (start + timedelta(seconds=i * step)).isoformat(sep=" ")
+        for mach in machines:
+            temp = 42 + 3 * math.sin(i / 500.0) + random.gauss(0, 0.6)
+            vib = 1.2 + 0.4 * math.sin(i / 90.0) + random.gauss(0, 0.08)
+            load = 60 + 15 * math.sin(i / 300.0) + random.gauss(0, 3)
+            if mach == "cnc-02":                 # bearing wear: vibration creeps up over the 2 days
+                vib += 0.9 * (i / points)
+            if random.random() < 0.0008:         # rare tool-chatter spike
+                vib += random.uniform(0.4, 0.9)
+            w.writerow([ts, mach, f"{temp:.2f}", f"{vib:.3f}", f"{load:.1f}"])
+print(f"wrote {out} ({out.stat().st_size/1e6:.1f} MB, {points * len(machines)} rows)")
+```
+
+```sh
+uv run python Module01/generate_telemetry.py
+```
+
+The script writes the CSV **next to itself** (via `Path(__file__)`), so it does not matter which folder you run it from.
+
+**Step 2 — load it into SQLite.** This is your first taste of an **ingestion pipeline** — the same pattern your final project will use. Save this as `Module01/load_telemetry.py` and run it: it uses only Python's built-in `sqlite3`, so it works on every platform, with no `sqlite3` command-line shell required.
+
+```python
+"""Load Module01/telemetry.csv into Module01/telemetry.db (no sqlite3 shell needed)."""
+import csv, sqlite3
+from pathlib import Path
+
+here = Path(__file__).parent
+csv_path = here / "telemetry.csv"
+db_path = here / "telemetry.db"
+
+conn = sqlite3.connect(db_path)
+conn.executescript("""
+    DROP TABLE IF EXISTS readings;
+    CREATE TABLE readings(
+        ts           TEXT    NOT NULL,
+        machine      TEXT    NOT NULL,
+        temp_c       REAL    NOT NULL,
+        vib_rms      REAL    NOT NULL,
+        spindle_load REAL    NOT NULL
+    );
+""")
+with csv_path.open(newline="") as f:
+    rows = csv.reader(f)
+    next(rows)                                   # skip the header
+    conn.executemany("INSERT INTO readings VALUES (?, ?, ?, ?, ?)", rows)
+conn.commit()
+n = conn.execute("SELECT COUNT(*) FROM readings").fetchone()[0]
+print(f"loaded {n} rows into {db_path}")
+conn.close()
+```
+
+```sh
+uv run python Module01/load_telemetry.py
+```
+
+> [!NOTE]
+> **Prefer the `sqlite3` command-line shell?** If it is installed, you can load the same file by hand. Inside the shell run `.mode csv`, then `.import --skip 1 Module01/telemetry.csv readings` (`.` commands are not SQL — they are shell directives, so they go in the interactive shell, not in a Python string). `.import --skip` needs SQLite ≥ 3.32; the Python loader above has no such requirement, which is why it is the default here.
+>
+> **Windows:** the `sqlite3` shell is not installed by default, and the `<<'SQL' … SQL` heredoc and `<` redirection used in later modules are **Unix-shell** features. The simplest fix is to run the labs in your **editor's terminal, pointed at Git Bash** (Git Bash ships with Git for Windows) — see [where to run the labs](./Z-resources-bank.md#where-to-run-the-labs-your-editors-terminal). (The pure-Python loader above sidesteps all of this.)
+
+**Step 3 — answer the shop manager's real questions.** Run each query in your SQLite client and save the output. Note how long each takes — in the `sqlite3` shell, put `.timer on` on its own line first (it prints a `Run Time:` line of CPU time after each statement). For wall-clock numbers, or when working in Datasette, use [Measuring query time](./Z-resources-bank.md#measuring-query-time):
+
+```sql
+.timer on
+-- 1. How many readings per machine?
+SELECT machine, COUNT(*) AS n FROM readings GROUP BY machine;
+
+-- 2. What was the peak vibration per machine in these two days?
+SELECT machine, MAX(vib_rms) AS peak_vib FROM readings GROUP BY machine;
+
+-- 3. How many readings exceeded a 2.0 mm/s vibration alarm?
+SELECT COUNT(*) FROM readings WHERE vib_rms > 2.0;
+```
+
+> [!TIP]
+> **No `sqlite3` shell, or prefer a browser?** Start **Datasette** — it turns the database file into both a browsable website and a SQL prompt. From your repo root:
+>
+> ```sh
+> uvx datasette Module01/telemetry.db
+> ```
+>
+> It prints the URL to open (default port **8001**):
+>
+> - `http://127.0.0.1:8001/telemetry` — browse and filter the `readings` table.
+> - `http://127.0.0.1:8001/telemetry/-/query` — the **Execute SQL** page: paste the three queries above and run them interactively; each result exports as CSV or JSON.
+>
+> `datasette Module01/telemetry.db -o` opens the browser for you. `uvx …` runs the tool without a permanent install; since you installed it in Task 3, plain `datasette …` works too.
+
+**Step 4 — prove the "embedded, no server" claim numerically.** Report how big `telemetry.db` is and how many rows it holds.
+
+```sh
+ls -lh Module01/telemetry.db
+sqlite3 Module01/telemetry.db "SELECT COUNT(*) FROM readings;"
+```
+
+*Portfolio evidence:* the generator script, the `.db` file size and row count, and the three query results. One sentence: *what would this dataset cost to run in the cloud, and who would pay for it?*
+
+### ★ Task 7: The first LLM-assisted SQL profiling task
+
+This is the habit the whole course is built on.
+
+1. Ask your preferred LLM (ChatGPT, Claude, DeepSeek, or a local model) for a query **against your schema**. Use a prompt like:
+
+   > "Here is my SQLite table: `readings(ts TEXT, machine TEXT, temp_c REAL, vib_rms REAL, spindle_load REAL)`. Write a query that returns, for each machine, the average spindle load for readings taken overnight (after 18:00), ordered by average load descending."
+
+2. **Do not trust the answer yet.** Do all three of the following and record what happened:
+   - **Run it.** Does it execute? If it errors, paste the error back to the model and iterate.
+   - **Profile it.** Prefix it with `EXPLAIN QUERY PLAN` and note whether you see `SCAN readings` (full-table scan).
+   - **Break it.** Find a way the generated query could be wrong — a wrong time boundary, a missing `GROUP BY`, a column typo, or (most instructive) a string-vs-datetime comparison mistake (`ts` is text; `ts > '2026-01-05 18:00:00'` works, but a sloppy `LIKE '%18%'` does not).
+
+3. Write down, in one short paragraph: **what the model got right, what it got wrong, and how you verified it.** This paragraph is a miniature of your reflection logbook and is your Module 1 AI-verification evidence.
+
+*Portfolio evidence:* the exact prompt you used, the generated SQL, the `EXPLAIN QUERY PLAN` output, and your verification paragraph.
+
+### ◇ Task 8 (Stretcher): Publish your data with Datasette
+
+Turn the database into something a colleague can browse in a browser:
+
+```sh
+uvx datasette Module01/telemetry.db -o
+```
+
+Explore the table, filter by machine, and export one filtered view as CSV. Note the URL of a single row.
+*Portfolio evidence:* a screenshot of the Datasette table view and the exported CSV.
+
+### ◇ Task 9 (Optional): `sqlite3` shell power moves
+
+Push the shell well past the basics — every one of these is something you will reach for again.
+
+- **Import a CSV without any Python:** create `readings`, then `.mode csv` and `.import --skip 1 Module01/telemetry.csv readings`.
+- **Keep your SQL in a file and replay it:** put your queries in `Module01/queries.sql` and run `sqlite3 Module01/telemetry.db < Module01/queries.sql` (or `.read Module01/queries.sql` at the prompt).
+- **Try the output modes:** `.mode box` (default), `.mode json`, `.mode markdown`, `.mode insert`, and save one result with `.once Module01/result.json`.
+- **Own the file:** make a copy with `.backup Module01/backup.db`; compact with `VACUUM INTO 'Module01/compact.db'`; compare the file sizes; ask *why* they differ (or don't).
+- **Work across files:** `ATTACH 'Module01/tour.db' AS t;` and join a table from each database.
+
+*Portfolio evidence:* `Module01/shell-power.md` — the commands you ran and one surprising finding (e.g. how the `.mode json` output differs from `.mode markdown`, or what `VACUUM` changed).
+
+### ◇ Task 10 (Optional): Datasette — facets, filters, and the JSON API
+
+Run `uvx datasette Module01/telemetry.db -o` and explore the web side properly:
+
+- **Filter** by a column and study the URL it produces (e.g. `?machine=cnc-02`) — the UI is just building query strings.
+- **Facet**: click *Facet by* on a column (or append `?_facet=vib_rms`) and read the counts.
+- **Query**: run the Task 6 dashboard on the `/-/query` page, then use the **Download** links to export the result as CSV and JSON.
+- **The API is the same pages**: fetch `/telemetry/readings.json?_size=5` (a table) and `/-/query.json?sql=SELECT+…` (a query) — anything you can read in the browser, you can `curl` as JSON.
+- Read `datasette --help` and try `--metadata`, and `-h 0.0.0.0 -p 8001` (only if you want to reach it from another machine).
+
+*Portfolio evidence:* `Module01/datasette.md` with the three URLs you used (table, facet, query-as-JSON) and a screenshot.
+
+### ◇ Task 11 (Optional): Datasette Lite & `sqlite-utils` — the same job, other tools
+
+- **No install at all?** Open **Datasette Lite** ([lite.datasette.io](https://lite.datasette.io/)) — Datasette compiled to WebAssembly — and load a SQLite file (or a CSV/JSON URL) entirely in the browser. Run one of your queries there.
+- **Do the whole pipeline from the terminal with `sqlite-utils`:**
+  ```sh
+  sqlite-utils insert Module01/tour.db readings Module01/telemetry.csv --csv --detect-types
+  sqlite-utils schema Module01/tour.db
+  sqlite-utils rows Module01/tour.db readings --csv | head
+  sqlite-utils enable-fts Module01/tour.db readings machine
+  sqlite-utils search Module01/tour.db readings cnc
+  ```
+- **Compare the three ways** to build and query the same table — `sqlite3`, `sqlite-utils`, and Python's `sqlite3` module. Write 3–4 sentences: which had the fewest keystrokes, which was the clearest, and when you would pick each.
+
+*Portfolio evidence:* `Module01/toolbox.md` with your notes and (for Datasette Lite) a screenshot.
+
+## ✅ Suggested portfolio evidence (proofs of the learning goals)
+
+
+- [ ] Your own repo **created from the template** (public / instructor-readable) with the **instructor added as a collaborator**.
+- [ ] A clean `.gitignore` (database and secret files stay out of Git).
+- [ ] A short **commit history** with descriptive messages, and a Markdown page with working **interlinks** (including one to a pod mate's portfolio).
+- [ ] `Module01/README.md` with this module's **learning goals**.
+- [ ] `Module01/sql-island.md` — your answers to the tutorial questions.
+- [ ] `pyproject.toml` and `uv.lock` (reproducible `uv` environment; **`.venv/` stays out of Git**).
+- [ ] `uv-check.py` and its `uv run uv-check.py` output.
+- [ ] `shell-tour.txt` and `tour.sql` — your captured `sqlite3` shell session and a `.dump`.
+- [ ] `generate_telemetry.py` — the telemetry generator.
+- [ ] `load_telemetry.py` — the CSV→SQLite ingestion loader.
+- [ ] `telemetry.db` size + row count (a screenshot or text file; **do not commit the `.db` file itself**).
+- [ ] Query outputs for Tasks 6 and 7, with timings.
+- [ ] Your one-paragraph **AI verification** note (what the model got right/wrong and how you checked).
+- [ ] `Reflections/ref01.md` — your first logbook entry, using the [reflection template](https://github.com/iotempire/iot-portfolio-template/blob/main/Reflections/TEMPLATE.md).
+- [ ] (Stretcher) Datasette screenshot and exported CSV.
+- [ ] (Optional) evidence for whichever of Tasks 9–11 you did (`shell-power.md`, `datasette.md`, `toolbox.md`).
+
+> [!IMPORTANT]
+> Never commit `*.db`, `*.duckdb`, or `.env` files. A reviewer must be able to rebuild your database from your scripts — that reproducibility is part of the assessment.
+
+## 📚 If you want to go deeper
+
+- Martin Kleppmann, Adam Wiggins, Peter van Hardenberg, Mark McGranaghan — *Local-First Software: You Own Your Data, in spite of the Cloud* (Ink & Switch, 2019) — [inkandswitch.com/essay/local-first](https://www.inkandswitch.com/essay/local-first/)
+- SQLite — *Appropriate Uses For SQLite* — [sqlite.org/whentouse.html](https://www.sqlite.org/whentouse.html)
+- Ruby on Rails — *Rails 8.0: No PaaS Required* (2024) — [rubyonrails.org](https://rubyonrails.org/2024/11/7/rails-8-no-paas-required)
+- htmx — *Locality of Behaviour* — [htmx.org/essays/locality-of-behaviour](https://htmx.org/essays/locality-of-behaviour/)
+- Simon Willison — *Datasette: an ecosystem of tools for working with small data* — [simonwillison.net/2021/Jul/22/small-data](https://simonwillison.net/2021/Jul/22/small-data)
+- Anton Zhiyanov — *SQLite is not a toy database* (2021) — [antonz.org](https://antonz.org/sqlite-is-not-a-toy-database/)
+- **A fun side read:** [Fossil vs Git — the architectural irony](./Z-resources-bank.md#side-reading-fossil-vs-git--the-architectural-irony) — why SQLite's author doesn't use Git, and why that mirrors SQLite-vs-PostgreSQL.
+- More (and the counter-arguments) in the [resource bank](./Z-resources-bank.md#why-local-first-and-why-the-heavy-three-tier-default-is-questioned)
+
+**⬆︎ ===== DRAFT BOUNDARY — everything above is settled for this run ===== ⬆︎**
+
+---
+
+[← Course workbook](../README.md) | [Quick module index](./00-index.md) | [Next: Module 2 — Data Contracts & Reading Legacy Schemas →](./02-data-contracts-and-legacy-schemas.md)

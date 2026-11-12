@@ -1,61 +1,79 @@
-# Module 2
+# Module 2 — Data Contracts and Legacy Schemas
 
-> **Example module** from the IoT introduction class. Adjust the headings and tasks to match your actual course content.
+Author: John Dadzie
 
-We are going to show here notes for Task 1, 2, 3, 4, and 5 to prove
+[← Portfolio](../README.md) |
+[Official Module 2](../professors%20modules/modules/02-data-contracts-and-legacy-schemas.md)
 
-## Learning Goals
+## What I learned
 
-> Copy the module's learning goals from the course workbook. Keep the `LG1`, `LG2`, … IDs and a one-word keyword; under each goal, link to the task that proves it.
+This module taught me how to understand a database that has no reliable
+documentation:
 
-<a id="lg1"></a>
-### LG1 — `<keyword>`
+1. Read the tables and infer the entities and relationships.
+2. Use SQL queries to prove data problems instead of only describing them.
+3. Turn the corrected design into an executable data contract.
 
-<copy the goal here>
+The original database is intentionally flawed. I did **not** silently repair
+it. I first recorded what it contains in [er-audit.md](er-audit.md), then
+designed the safer version in [contract.py](contract.py).
 
-**Evidence:** [Task 1](#task-1)
+## Learning goals and evidence
 
-<a id="lg2"></a>
-### LG2 — `<keyword>`
+| Goal | Evidence |
+|---|---|
+| Record study, sources, sketches, and pod learning | [study-log.md](study-log.md) |
+| Reconstruct an ER model | [er-audit.md](er-audit.md), section 1 |
+| Find integrity defects with SQL | [er-audit.md](er-audit.md), section 2 |
+| Explain keys, cardinality, and normalization | [er-audit.md](er-audit.md), sections 1 and 3 |
+| Write an executable contract | [contract.py](contract.py), [contract-ddl.sql](contract-ddl.sql) |
+| Complete the stretcher work | [mermaid-lab.md](mermaid-lab.md) |
+| Reflect on the work and verification | [reflection](../Reflections/ref02.md) |
 
-<copy the goal here>
+## 1. Reproduce the legacy database
 
-**Evidence:** [Task 2](#task-2)
+The setup is deliberately simple and repeatable:
 
-<a id="lg3"></a>
-### LG3 — `<keyword>`
+```powershell
+sqlite3 Module02/legacy.db ".read Module02/legacy_schema.sql"
+```
 
-<copy the goal here>
+The script creates four machines, four part rows (including a duplicate),
+and four maintenance jobs (including an orphan job). It can be run again
+because it drops the old tables first.
 
-**Evidence:** [Task 3](#task-3)
+## 2. Main result
 
-<a id="task-1"></a>
-## Task 1 — `<short title>`
+The old schema hides a many-to-many relationship in the text value
+`parts_used = 'P-1001,P-1002'`. The corrected design uses the junction table
+`job_part`, so each job/part pair is stored as one row.
 
-**Proves:** [LG1](#lg1)
+Other important corrections are:
 
-This task was executed by myself.
+- every table has a primary key;
+- maintenance jobs reference `machine_id`, not a machine name;
+- part numbers are unique;
+- prices use `NUMERIC(9, 2)`;
+- dates use a date type and are required;
+- foreign keys prevent orphan rows.
 
-<a id="task-2"></a>
-## Task 2 — `<short title>`
+## 3. Run the contract
 
-**Proves:** [LG2](#lg2)
+The contract contains both application validation (Pydantic) and database
+constraints (SQLAlchemy):
 
-This task was executed by my partner. The implementation was about ...
-It is [here](https://github.com/partner/iot-portfolio/Module02/README.md#task-2).
+```powershell
+uv run python Module02/contract.py
+```
 
-<a id="task-3"></a>
-## Task 3 — `<short title>`
+The command validates one correct object, rejects one invalid object, creates
+the corrected SQLite schema, and prints its tables.
 
-**Proves:** [LG3](#lg3)
+The emitted DDL is saved in [contract-ddl.sql](contract-ddl.sql).
 
-...
+## 4. Clear conclusion
 
-## Reflection 2
+The legacy database can store data, but it cannot reliably explain or protect
+that data. The audit queries show the defects; the contract makes the
+intended rules explicit and enforceable.
 
-[Reflection 2](../Reflections/ref02.md)
-
-If the module is longer than 1 week, you might have several reflections within it. If not, delete this and the following.
-
-## Reflection 3
-[Reflection 3](../Reflections/ref03.md)

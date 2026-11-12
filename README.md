@@ -5,6 +5,31 @@ Author: John Dadzie
 This portfolio documents my work for the HSBI Databases course,
 including SQL exercises, Python scripts, query results, and reflections.
 
+
+My partner are: 
+1. Michael Konadu Ampadu - [portfolio link](https://github.com/MichaelKonsduAmpadu/michael-sql.portfolio)
+2. Stephanie Crewe- [portfolio link](https://github.com/stephaniecrewe8-code/Database_Portfolio-S.Crewe)
+3. Natnael Fesseha- [portfolio link](https://github.com/nfesseha/Database-Portflio-Fesseha)
+
+
+
+In my team for the final project, I also had the following members:
+1. Michael Konadu Ampadu - [portfolio link](https://github.com/MichaelKonsduAmpadu/michael-sql.portfolio)
+2. Stephanie Crewe - [portfolio link](https://github.com/stephaniecrewe8-code/Database_Portfolio-S.Crewe)
+3. Elijah Nekambi - [portfolio link](https://github.com/Nekambi/Portfolio-Nekambi/tree/main)
+4. Zinyu Ngangwa Barachie - [portfolio link](https://github.com/bzinyu-tech/DataBases-Portfolio_Zin)
+5. Moses Katende Mulumba - [portfolio link](https://github.com/katende-m/Portifolio-Database)
+6. Natnael Fesseha- [portfolio link](https://github.com/nfesseha/Database-Portflio-Fesseha)
+
+Our team final project repository is [not here yet](https://github.com/somewhere/final-iot-project)
+
+My personal profile and expectations, you can find [here](Module01/README.md#task-personal-profile).
+
+Syllabus for this Portfolio [here](full-classes/hsbi-databases-10d/syllabus.md)
+
+
+
+
 ## Course resources
 
 - [Course workbook](https://github.com/iotempire/iotempire-teaching/tree/main/full-classes/hsbi-databases-10d)
@@ -14,6 +39,8 @@ including SQL exercises, Python scripts, query results, and reflections.
 
 - [Module 1 — Introduction & Local-First Foundations](Module01/README.md)
 - [Module 2 — Data Contracts & Reading Legacy Schemas](Module02/README.md)
+- [Module 3 — LLM-Assisted SQL & Query Profiling](Module03/README.md)
+- [Module 4 — Data Integrity, Constraints & Edge Triggers](Module04/README.md)
 
 Module 3 — LLM-Assisted SQL & Query Profiling will be added as we progress.
 

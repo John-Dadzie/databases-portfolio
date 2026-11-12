@@ -17,3 +17,6 @@ __pycache__/
 
 # Generated telemetry data
 telemetry.csv
+
+# Module 6a generated export
+Module06a/*.csv

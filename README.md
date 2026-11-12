@@ -41,6 +41,8 @@ Syllabus for this Portfolio [here](full-classes/hsbi-databases-10d/syllabus.md)
 - [Module 2 — Data Contracts & Reading Legacy Schemas](Module02/README.md)
 - [Module 3 — LLM-Assisted SQL & Query Profiling](Module03/README.md)
 - [Module 4 — Data Integrity, Constraints & Edge Triggers](Module04/README.md)
+- [Module 6a — The Analytical Engine](Module06a/README.md)
+- [Module 4 — Data Integrity, Constraints & Edge Triggers](Module04/README.md)
 
 Module 3 — LLM-Assisted SQL & Query Profiling will be added as we progress.
 

@@ -1,52 +1,62 @@
-# Reflection 1
-
-> This is the only reflection file that spells out the prompts. fill in the [short description here]
-> In the future, copy the [reflection template](TEMPLATE.md) to the respective refnn.md file
-> and write your answers there.
-> Remove this note.
-
-# Reflection template
-
-> Copy this file to `ref01.md`, `ref02.md`, … and replace each `[short description here]`
-> with your answer. Keep each section short — a few sentences is plenty.
+# Reflection 1 — Introduction & Local-First Foundations
 
 ## Take-away
 
-What do you want to remember? What would be your advice?
+SQL Island helped me understand how a database can support a game.
+SQL can retrieve information and change data, such as a character's
+name, gold, or owned items. SELECT is the command I remember most.
 
-[short description here]
+My advice is to run a query, check its result, and understand what
+changed before moving on.
 
 ## What was good?
 
-[short description here]
+Seeing the SQL results affect the game made the commands easier
+to understand. I completed SQL Island with guidance and saved
+a screenshot of completion.
+
+I also set up my GitHub portfolio and saved my scripts and notes.
 
 ## What was difficult?
 
-Where did you struggle? What was the root cause?
+Setting up the tools involved several steps. Git, uv, and the SQLite
+shell were initially unavailable in the terminal, so we installed
+them and checked that they worked.
 
-[short description here]
+The game displayed translated English labels while its database
+used German names. This caused confusion when writing queries.
+I still need practice writing SQL independently.
 
 ## Exploration and show stoppers
 
-Was there any good/fun “struggling” or exploration?
-Anything where you should reach out to peers or instructors?
+I practised filtering, sorting, joining tables, calculating totals
+and averages, and updating data.
 
-[short description here]
+The setup errors were resolved. I want to practise joins and
+grouping further so I can explain and write them with less help.
 
 ## Interaction with peers and instructors
 
-[short description here]
+Tunay helped me set up VS Code.
 
 ## How did you verify AI suggestions?
 
-What did you ask an AI, and how did you check the answer against a datasheet,
-a measurement, a packet capture, or a live test? Where was it wrong?
+I used ChatGPT for setup instructions, SQL suggestions, and explanations.
 
-[short description here]
+I ran the suggested commands and checked their output. For the
+telemetry query, I inspected the results and EXPLAIN QUERY PLAN.
+The plan showed a table scan and temporary B-trees for grouping
+and sorting.
+
+In SQL Island, an AI suggestion used the table name inhabitants.
+The game reported that the table did not exist. Using the actual
+table name, bewohner, fixed the error. This showed me that an
+AI-generated query must be checked against the real database.
 
 ## Help and extra work
 
-Who helped you, gave feedback, and was it valuable?
-Who did you help? Did you present, implement, make a PR, or fix something crucial for the class?
+Tunay helped with VS Code setup. ChatGPT provided step-by-step
+guidance and helped draft the documentation.
 
-[short description here]
+I completed the exercises with assistance. My next goal is to
+repeat some queries without copying a suggested answer.

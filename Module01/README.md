@@ -17,7 +17,8 @@ Python, and verify AI-generated SQL using results and query plans.
 Explain how this class works: the CBL/PBL philosophy, portfolio-based
 project work assessment, and the “moving bar” of a first-time course.
 
-**Evidence:** Course understanding and personal reflection still to add.
+**Evidence:** [Module reflection](../Reflections/ref01.md).
+An explanation of the course and assessment model still needs adding.
 
 ### LG2 — Portfolio
 
@@ -25,16 +26,25 @@ Set up a personal GitHub portfolio from the course template, with a
 clean first commit and a .gitignore that keeps databases and secrets
 out of Git.
 
-**Evidence:** Repository created and cloned; customization in progress.
-The .gitignore and first personal commit still need checking.
+**Evidence:** [GitHub portfolio](https://github.com/John-Dadzie/databases-portfolio),
+[commit history](https://github.com/John-Dadzie/databases-portfolio/commits/main/),
+and [.gitignore](../.gitignore).
 
 ### LG3 — Toolchain
 
 Set up the entire toolchain reproducibly with uv: one fixed Python
 plus SQLite, DuckDB, Datasette, and more, and verify it.
 
-**Evidence:** Pending. Running the practice scripts alone does not
-verify the required uv environment.
+**Evidence:**
+- [Python version setting](../.python-version)
+- [Project configuration](../pyproject.toml)
+- [Dependency lockfile](../uv.lock)
+- [Verification script](../uv-check.py)
+- [Verification output](uv-check-output.txt)
+- [SQLite shell session](shell-tour.txt)
+
+Python 3.14.9 and all five required project packages were detected.
+The standalone SQLite shell also ran successfully.
 
 ### LG4 — Architecture
 
@@ -42,24 +52,36 @@ Explain, with a measurement, the difference between an embedded
 database and a client/server database, and why most local apps
 should not run a server.
 
-**Evidence:** Local telemetry measurements are saved in the practice
-folder and still need transferring and reviewing.
+**Evidence:** [Telemetry measurements and local-first notes](notes_template.md).
+
+The recorded database contains 172,800 rows and occupies
+10,526,720 bytes. Python accesses the SQLite file directly,
+without a separate database server.
+
+The architecture explanation and remaining task evidence still
+need a final review.
 
 ### LG5 — Python
 
 Load real rows into SQLite and query them from Python using
 bound parameters.
 
-**Evidence:** Telemetry scripts and results are saved in the practice
-folder and still need transferring into this portfolio.
+**Evidence:**
+- [Telemetry generator](generate_telemetry.py)
+- [CSV-to-SQLite loader](load_telemetry.py)
+- [Query checks](check_telemetry.py)
+- [Results and bound-parameter explanation](notes_template.md)
 
 ### LG6 — Verification
 
 Take a first LLM-generated query, run it, and begin the habit:
 verify before you trust.
 
-**Evidence:** SQL, query results, EXPLAIN QUERY PLAN output, and
-verification notes are saved locally and still need transferring.
+**Evidence:** [AI-query script](profile_ai_query.py) and
+[verification notes](notes_template.md).
+
+The saved notes include the prompt, SQL, results, query plan,
+and a discussion of the 18:00 boundary.
 
 ## Task checklist
 
@@ -68,17 +90,18 @@ verification notes are saved locally and still need transferring.
 - [ ] Finish personalizing the portfolio.
 - [ ] Add pod members and links to their portfolios.
 - [ ] Add the instructor as a collaborator.
-- [ ] Add and verify .gitignore.
-- [ ] Commit and push the portfolio changes.
-- [ ] Set up and verify the uv environment.
-- [ ] Complete the SQLite shell tour and save its output.
-- [ ] Play SQL Island and save a progress screenshot.
-- [ ] Write sql-island.md based on the actual game experience.
+- [x] Add and verify .gitignore.
+- [x] Commit and push the initial portfolio changes.
+- [x] Set up and verify the uv project environment.
+- [x] Complete the SQLite shell tour and save its output.
+- [x] Complete SQL Island and save a completion screenshot.
+- [x] Write sql-island.md based on the game experience.
 - [x] Run the local telemetry practice exercises.
 - [x] Run and inspect an AI-generated SQL query.
-- [ ] Transfer scripts and notes into this portfolio.
+- [x] Transfer scripts and notes into this portfolio.
 - [ ] Check query timings and remaining telemetry evidence.
-- [ ] Write the Module 1 reflection.
+- [x] Write the Module 1 reflection.
+- [ ] Commit and push the latest reflection and README updates.
 
 ## Personal profile
 
@@ -87,15 +110,11 @@ Still to write in my own words:
 - Previous database, Python, terminal, and Git experience.
 - What I hope to learn from this course.
 
-## Collaboration and AI use
+## SQL Island
 
-AI assisted with setup, practice materials, and drafting documentation.
-I will record collaborators and sources, review the drafts, and
-explain how I checked the code and SQL results.
+I completed SQL Island with step-by-step AI guidance.
 
-## Reflection
-
-The Module 1 reflection still needs to be written.
+- [Learning reflection and completion screenshot](sql-island.md)
 
 ## SQLite shell tour
 
@@ -104,4 +123,20 @@ Proves: LG3 — Toolchain
 - [Captured shell session](shell-tour.txt)
 - [SQL dump to rebuild the practice database](tour.sql)
 
-Most useful dot-command: .schema
+Most useful dot-command: `.schema`.
+
+I still need to explain in my own words why I found it useful.
+
+## Collaboration and AI use
+
+Tunay helped me set up VS Code.
+
+ChatGPT assisted with setup, practice materials, SQL explanations,
+and documentation drafts. I ran the suggested queries and checked
+their results and feedback. This was guided practice.
+
+Pod membership and portfolio links still need to be recorded.
+
+## Reflection
+
+[Read my Module 1 reflection](../Reflections/ref01.md)

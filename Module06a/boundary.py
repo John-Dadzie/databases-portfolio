@@ -34,7 +34,17 @@ def run_duckdb():
     return insert, (time.perf_counter() - start) * 1000
 
 
+def run_duckdb_batch():
+    con = duckdb.connect()
+    con.execute("CREATE TABLE s(id INTEGER PRIMARY KEY, k TEXT, v DOUBLE)")
+    start = time.perf_counter()
+    con.executemany("INSERT INTO s VALUES (?, ?, ?)", rows)
+    return (time.perf_counter() - start) * 1000
+
+
 si, sl = run_sqlite()
 di, dl = run_duckdb()
+db = run_duckdb_batch()
 print(f"inserts sqlite {si:.1f} ms | duckdb {di:.1f} ms")
 print(f"lookups sqlite {sl:.1f} ms | duckdb {dl:.1f} ms")
+print(f"batch inserts duckdb {db:.1f} ms")

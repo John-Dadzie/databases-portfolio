@@ -16,22 +16,29 @@ Author: John Dadzie
 
 ## Results
 
-`prepare.py` produced exactly **2,000,000 rows**. `to_parquet.py` produced the same row count and matching `SUM(part_price) = 49,000,000.00`, proving that the conversion did not change the dataset. The generated database was 112,660,480 bytes; the zstd Parquet file was 973,230 bytes. The generated database, CSV, and Parquet files are local build artefacts and are ignored by Git.
+`prepare.py` produced exactly **2,000,000 rows**. `to_parquet.py` produced the same row count and matching `SUM(part_price) = 21,000,000.00`, proving that the conversion did not change the dataset. The generated database was 112,660,480 bytes; the snappy Parquet file was 1,872,221 bytes and the zstd Parquet file was 970,527 bytes. The generated database, CSV, and Parquet files are local build artefacts and are ignored by Git.
 
 The interleaved five-run race produced:
 
 ```text
-dashboard: sqlite=4709.8 ms [4509.3-5935.3] duckdb=32.2 ms [30.0-33.6] ratio=146.3x
-monthly:   sqlite=2839.7 ms [2722.5-2932.2] duckdb=100.5 ms [80.7-121.0] ratio=28.3x
+dashboard: sqlite=4522.9 ms [3431.8-5246.9] duckdb=39.1 ms [38.7-39.6] ratio=115.6x
+monthly:   sqlite=3105.8 ms [2699.2-5751.6] duckdb=97.1 ms [81.5-123.8] ratio=32.0x
 ```
 
 The important result is the measured ratio, not a universal millisecond claim: DuckDB wins the full-table aggregate because Parquet is columnar and the query reads only the needed columns. The monthly query has a smaller ratio because `strftime` runs for every row.
 
-`EXPLAIN ANALYZE` showed a Parquet table scan reading the four projected columns across 2,000,000 rows, followed by projection and hash grouping; 17/17 row groups were scanned and the total reported time was 0.0722 s. SQLite's corresponding plan is `SCAN report_history` plus `USE TEMP B-TREE FOR GROUP BY`.
+`EXPLAIN ANALYZE` showed a Parquet table scan reading the four projected columns across 2,000,000 rows, followed by projection and hash grouping; 17/17 row groups were scanned and the total reported time was 0.0400 s. SQLite's corresponding plan is `SCAN report_history` plus `USE TEMP B-TREE FOR GROUP BY`.
 
-The boundary test showed SQLite is the correct engine for repeated single-row inserts and point lookups: SQLite measured 3.1 ms for inserts and 3.7 ms for lookups, while DuckDB measured 2,254.6 ms and 1,272.7 ms. DuckDB's per-statement overhead makes it slower there; batching helps but does not change the workload boundary.
+The boundary test showed SQLite is the correct engine for repeated single-row inserts and point lookups: SQLite measured 2.3 ms for inserts and 2.8 ms for lookups, while DuckDB measured 1,325.4 ms and 872.3 ms. DuckDB's per-statement overhead makes it slower there. `executemany` reduced DuckDB's insert time to 731.6 ms, but batching still did not close the gap.
 
-`refresh.py --check` was run twice. Both runs reported `2,000,000` rows and `49,000,000.0`, so the refresh is reproducible and checked.
+`refresh.py --check` was run twice:
+
+```text
+rows=2000000 checksum=21000000.0 parquet_bytes=970527 elapsed_ms=10251.6
+rows=2000000 checksum=21000000.0 parquet_bytes=970527 elapsed_ms=10237.8
+```
+
+The script compares SQLite and Parquet row counts and checksums, returns status 1 on a mismatch, and removes its temporary CSV. The two successful runs show that the refresh is idempotent for the measured values; the elapsed time varies with the machine.
 
 ## Verification questions
 

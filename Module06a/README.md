@@ -3,6 +3,7 @@
 Author: John Dadzie
 
 The complete evidence is in [duckdb-notes.md](duckdb-notes.md) and [memo.md](memo.md).
+The reflection is [ref06a.md](../Reflections/ref06a.md).
 
 Run from the repository root:
 

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520">
+  <style>
+    .entity { fill: #eef4ff; stroke: #234b8a; stroke-width: 2; }
+    .title { fill: #234b8a; }
+    .label { font: 700 18px Arial, sans-serif; fill: white; }
+    .field { font: 16px Arial, sans-serif; fill: #172033; }
+    .relation { stroke: #394b67; stroke-width: 2; fill: none; }
+    .cardinality { font: 700 15px Arial, sans-serif; fill: #394b67; }
+  </style>
+
+  <rect x="35" y="185" width="220" height="130" rx="6" class="entity"/>
+  <rect x="35" y="185" width="220" height="38" rx="6" class="title"/>
+  <text x="145" y="210" text-anchor="middle" class="label">MACHINE</text>
+  <text x="55" y="252" class="field">PK machine_id</text>
+  <text x="55" y="280" class="field">site</text>
+
+  <rect x="390" y="55" width="250" height="160" rx="6" class="entity"/>
+  <rect x="390" y="55" width="250" height="38" rx="6" class="title"/>
+  <text x="515" y="80" text-anchor="middle" class="label">MAINTENANCE_JOB</text>
+  <text x="410" y="122" class="field">PK job_id</text>
+  <text x="410" y="150" class="field">FK machine_id</text>
+  <text x="410" y="178" class="field">technician, done_on</text>
+
+  <rect x="390" y="320" width="250" height="145" rx="6" class="entity"/>
+  <rect x="390" y="320" width="250" height="38" rx="6" class="title"/>
+  <text x="515" y="345" text-anchor="middle" class="label">JOB_PART</text>
+  <text x="410" y="387" class="field">PK, FK job_id</text>
+  <text x="410" y="415" class="field">PK, FK part_no</text>
+
+  <rect x="745" y="320" width="220" height="145" rx="6" class="entity"/>
+  <rect x="745" y="320" width="220" height="38" rx="6" class="title"/>
+  <text x="855" y="345" text-anchor="middle" class="label">PART</text>
+  <text x="765" y="387" class="field">PK part_no</text>
+  <text x="765" y="415" class="field">part_price</text>
+
+  <path d="M255 220 L390 135" class="relation"/>
+  <path d="M515 215 L515 320" class="relation"/>
+  <path d="M640 392 L745 392" class="relation"/>
+
+  <text x="270" y="198" class="cardinality">1</text>
+  <text x="365" y="130" class="cardinality">0..*</text>
+  <text x="530" y="245" class="cardinality">1</text>
+  <text x="530" y="310" class="cardinality">0..*</text>
+  <text x="655" y="378" class="cardinality">0..*</text>
+  <text x="715" y="378" class="cardinality">0..*</text>
+
+  <text x="500" y="500" text-anchor="middle" class="field">
+    Normalized model: job_part resolves the many-to-many job/part relationship.
+  </text>
+</svg>

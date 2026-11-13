@@ -199,4 +199,7 @@ Open point: a technician can remain an attribute in a small system, but it shoul
 
 ## Shared image evidence
 
-The `Machine`–`MaintenanceJob`–`JobPart` diagram in [er-audit.md](er-audit.md) is the selected shared image/source because it shows the hidden many-to-many relationship and its repair in one view. The Mermaid source is kept in the portfolio so the diagram is reproducible and reviewable.
+The rendered [Module 2 ER diagram](pictures/module02-er-diagram.svg) shows the
+machine-to-job relationship and the `job_part` junction table that repairs the
+hidden many-to-many relationship. The Mermaid source remains in
+[er-audit.md](er-audit.md), so the image is reproducible and reviewable.

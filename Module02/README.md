@@ -3,7 +3,7 @@
 Author: John Dadzie
 
 [← Portfolio](../README.md) |
-[Official Module 2](../professors%20modules/modules/02-data-contracts-and-legacy-schemas.md)
+[Official Module 2](../professor%20modules/modules/02-data-contracts-and-legacy-schemas.md)
 
 ## What I learned
 

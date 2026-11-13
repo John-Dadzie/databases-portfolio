@@ -1,11 +1,13 @@
 """Run the Module 1 questions and a bound-parameter example on telemetry.db."""
 
 import sqlite3
+import time
 from pathlib import Path
 
 
 def show_query(connection, title, sql, parameters=()):
     print("\n" + title)
+    started = time.perf_counter()
     cursor = connection.execute(sql, parameters)
     if cursor.description:
         columns = [item[0] for item in cursor.description]
@@ -13,6 +15,7 @@ def show_query(connection, title, sql, parameters=()):
         print("-" * 68)
         for row in cursor.fetchall():
             print(" | ".join(str(value) for value in row))
+    print(f"elapsed_ms: {(time.perf_counter() - started) * 1000:.3f}")
 
 
 def main():

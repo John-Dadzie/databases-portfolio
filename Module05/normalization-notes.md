@@ -117,6 +117,46 @@ Expected clarification: the direct stored/repeated `job_id → site` path disapp
 3. Each part number has one current price.
 4. A part number occurs at most once in a job.
 
+## Three anomalies in the flat design
+
+These examples use the generated rows and show why the repeated facts belong
+in separate tables.
+
+### Update anomaly
+
+```sql
+UPDATE flat_jobpart
+SET site = 'Bielefeld'
+WHERE machine_id = 'cnc-02';
+```
+
+This changes 4,000 repeated copies. Missing even one row leaves conflicting
+sites for the same machine. In the 3NF design, the equivalent update changes
+one row in `machine`.
+
+### Insert anomaly
+
+The flat table cannot record a new part and its price without also inventing a
+job row:
+
+```sql
+-- No standalone part can be inserted because there is no part table.
+-- A fake row would incorrectly require a job, machine, technician, and date.
+```
+
+The 3NF design inserts the new fact directly into `part`.
+
+### Delete anomaly
+
+```sql
+DELETE FROM flat_jobpart
+WHERE job_id = 1;
+```
+
+If job 1 was the only job using `P-0001`, this deletes the only stored copy of
+that part's price. In the 3NF design, deleting a `job_part` association does
+not delete the independent `part` fact.
+
 If any assumption is false, revise the FDs and keys before decomposing the table.
 
 

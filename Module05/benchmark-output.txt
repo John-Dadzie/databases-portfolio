@@ -1,0 +1,19 @@
+Module 5 benchmark evidence
+counts: flat=200000 machine=50 part=10 job=20000 job_part=200000 report=200000
+result rows: normalized=350 denormalized=350 equal=True
+normalized_ms: [98.561, 89.145, 91.218] median=91.218
+denormalized_ms: [106.99, 103.823, 103.438] median=103.823
+site update rows: normalized=1 denormalized=4000
+denormalized_without_index_ms=70.331
+storage_bytes: normalized=4071424 report=11091968
+
+EXPLAIN QUERY PLAN normalized:
+13 0 216 SCAN jp
+15 0 45 SEARCH j USING INTEGER PRIMARY KEY (rowid=?)
+23 0 47 SEARCH m USING INDEX sqlite_autoindex_machine_1 (machine_id=?)
+28 0 47 SEARCH p USING INDEX sqlite_autoindex_part_1 (part_no=?)
+33 0 0 USE TEMP B-TREE FOR GROUP BY
+
+EXPLAIN QUERY PLAN denormalized:
+7 0 224 SCAN report_jobpart USING INDEX ix_report_machine
+15 0 0 USE TEMP B-TREE FOR GROUP BY

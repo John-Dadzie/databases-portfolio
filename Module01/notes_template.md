@@ -14,6 +14,11 @@ Peak vibration by machine: cnc-01: 2.398; cnc-02: 3.168; cnc-03: 2.55
 Number of readings above 2.0: 11,714
 Approximate database file size: about 10.5 MB (10,526,720 bytes)
 
+The same local file avoids a server, network, hosting bill, and database
+administrator for this one-dashboard/two-reader workload. A cloud deployment
+would add recurring infrastructure and transfer costs paid by the shop, with
+no measured concurrency requirement to justify them.
+
 ## Bound parameters
 
 What value did the example pass separately from the SQL text? Why is that useful?
@@ -31,6 +36,17 @@ What did EXPLAIN QUERY PLAN report? SCAN readings; USE TEMP B-TREE FOR GROUP BY;
 One possible edge case: The query uses > '18:00:00', so it excludes readings taken at exactly 18:00. If those should count, use >= instead.
 
 The AI got the table, average calculation, grouping, and descending sort right. I ran the query and checked all three results. EXPLAIN showed a full table scan and temporary structures for grouping and sorting. The boundary check reminded me that > excludes readings at exactly 18:00.
+
+The query plan was:
+
+```text
+SCAN readings
+USE TEMP B-TREE FOR GROUP BY
+USE TEMP B-TREE FOR ORDER BY
+```
+
+The three telemetry queries and their output are captured in
+[telemetry-query-output.txt](telemetry-query-output.txt).
 
 SELECT machine, AVG(spindle_load) AS avg_spindle_load
 FROM readings

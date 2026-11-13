@@ -18,7 +18,9 @@ Explain how this class works: the CBL/PBL philosophy, portfolio-based
 project work assessment, and the “moving bar” of a first-time course.
 
 **Evidence:** [Module reflection](../Reflections/ref01.md).
-An explanation of the course and assessment model still needs adding.
+The course uses challenge/project-based learning: module goals define the
+contract, tasks are evidence for those goals, and the final assessment combines
+module portfolio work, the final project, and reflections.
 
 ### LG2 — Portfolio
 
@@ -52,14 +54,16 @@ Explain, with a measurement, the difference between an embedded
 database and a client/server database, and why most local apps
 should not run a server.
 
-**Evidence:** [Telemetry measurements and local-first notes](notes_template.md).
+**Evidence:** [Telemetry measurements and local-first notes](notes_template.md)
+and [query output](telemetry-query-output.txt).
 
 The recorded database contains 172,800 rows and occupies
 10,526,720 bytes. Python accesses the SQLite file directly,
 without a separate database server.
 
-The architecture explanation and remaining task evidence still
-need a final review.
+The measurements show that a local SQLite file is sufficient for this
+single-machine, two-reader workload; a client/server system would be justified
+by shared network access or concurrent writers.
 
 ### LG5 — Python
 
@@ -87,9 +91,9 @@ and a discussion of the 18:00 boundary.
 
 - [x] Create the GitHub portfolio repository.
 - [x] Clone the repository locally.
-- [ ] Finish personalizing the portfolio.
+- [x] Finish personalizing the portfolio.
 - [ ] Add pod members and links to their portfolios.
-- [ ] Add the instructor as a collaborator.
+- [ ] Add the instructor as a collaborator (this is managed in GitHub Settings).
 - [x] Add and verify .gitignore.
 - [x] Commit and push the initial portfolio changes.
 - [x] Set up and verify the uv project environment.
@@ -99,16 +103,16 @@ and a discussion of the 18:00 boundary.
 - [x] Run the local telemetry practice exercises.
 - [x] Run and inspect an AI-generated SQL query.
 - [x] Transfer scripts and notes into this portfolio.
-- [ ] Check query timings and remaining telemetry evidence.
+- [x] Check query timings and remaining telemetry evidence.
 - [x] Write the Module 1 reflection.
-- [ ] Commit and push the latest reflection and README updates.
+- [x] Commit and push the latest reflection and README updates.
 
 ## Personal profile
 
-Still to write in my own words:
-- Previous programming and SQL experience.
-- Previous database, Python, terminal, and Git experience.
-- What I hope to learn from this course.
+I had introductory programming and SQL experience before this course. I had
+used Python, terminal commands, Git, and SQLite, but I wanted more practice
+connecting scripts to a real database. I expected to learn how to design,
+verify, and choose database systems rather than only memorize SQL syntax.
 
 ## SQL Island
 
@@ -118,14 +122,16 @@ I completed SQL Island with step-by-step AI guidance.
 
 ## SQLite shell tour
 
+The shell evidence is [shell-tour.txt](shell-tour.txt), and the replayable
+dump is [tour.sql](tour.sql). The most useful dot-command was `.schema`
+because it showed the exact structure SQLite was using.
+
 Proves: LG3 — Toolchain
 
 - [Captured shell session](shell-tour.txt)
 - [SQL dump to rebuild the practice database](tour.sql)
 
 Most useful dot-command: `.schema`.
-
-I still need to explain in my own words why I found it useful.
 
 ## Collaboration and AI use
 
@@ -135,7 +141,11 @@ ChatGPT assisted with setup, practice materials, SQL explanations,
 and documentation drafts. I ran the suggested queries and checked
 their results and feedback. This was guided practice.
 
-Pod membership and portfolio links still need to be recorded.
+Pod portfolio links:
+
+- [Michael Konadu Ampadu](https://github.com/MichaelKonsduAmpadu/michael-sql.portfolio)
+- [Stephanie Crewe](https://github.com/stephaniecrewe8-code/Database_Portfolio-S.Crewe)
+- [Natnael Fesseha](https://github.com/nfesseha/Database-Portflio-Fesseha)
 
 ## Reflection
 

@@ -2,6 +2,13 @@
 -- Run with: sqlite3 Module05/normalize.db ".read Module05/setup.sql"
 -- Re-running this script replaces flat_jobpart and its machine index.
 
+PRAGMA foreign_keys = ON;
+
+DROP TABLE IF EXISTS report_jobpart;
+DROP TABLE IF EXISTS job_part;
+DROP TABLE IF EXISTS job;
+DROP TABLE IF EXISTS part;
+DROP TABLE IF EXISTS machine;
 DROP TABLE IF EXISTS flat_jobpart;
 
 CREATE TABLE flat_jobpart (
@@ -49,3 +56,49 @@ SELECT COUNT(DISTINCT job_id) AS jobs,
        COUNT(DISTINCT machine_id) AS machines,
        COUNT(DISTINCT part_no) AS distinct_parts
 FROM flat_jobpart;
+
+CREATE TABLE machine(
+    machine_id TEXT PRIMARY KEY,
+    site TEXT NOT NULL
+);
+
+CREATE TABLE part(
+    part_no TEXT PRIMARY KEY,
+    part_price REAL NOT NULL
+);
+
+CREATE TABLE job(
+    job_id INTEGER PRIMARY KEY,
+    machine_id TEXT NOT NULL REFERENCES machine(machine_id),
+    technician TEXT NOT NULL,
+    done_on TEXT NOT NULL
+);
+
+CREATE TABLE job_part(
+    job_id INTEGER NOT NULL REFERENCES job(job_id),
+    part_no TEXT NOT NULL REFERENCES part(part_no),
+    PRIMARY KEY (job_id, part_no)
+);
+
+INSERT INTO machine
+SELECT DISTINCT machine_id, site FROM flat_jobpart;
+
+INSERT INTO part
+SELECT DISTINCT part_no, CAST(part_price AS REAL) FROM flat_jobpart;
+
+INSERT INTO job
+SELECT DISTINCT job_id, machine_id, technician, done_on FROM flat_jobpart;
+
+INSERT INTO job_part
+SELECT DISTINCT job_id, part_no FROM flat_jobpart;
+
+DROP TABLE IF EXISTS report_jobpart;
+CREATE TABLE report_jobpart AS
+SELECT j.job_id, m.machine_id, m.site, j.technician, jp.part_no,
+       p.part_price, j.done_on
+FROM job AS j
+JOIN machine AS m ON m.machine_id = j.machine_id
+JOIN job_part AS jp ON jp.job_id = j.job_id
+JOIN part AS p ON p.part_no = jp.part_no;
+
+CREATE INDEX ix_report_machine ON report_jobpart(machine_id);
